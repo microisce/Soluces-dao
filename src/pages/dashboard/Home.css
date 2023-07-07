@@ -1,0 +1,17 @@
+.link {
+  color: #000;
+  text-decoration: none;
+  font-size: 14;
+  font-family: "Roboto";
+}
+
+.link-active {
+  color: #0a76cf;
+  text-decoration: none;
+  font-size: 14;
+  font-family: "Roboto";
+}
+
+.table {
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
