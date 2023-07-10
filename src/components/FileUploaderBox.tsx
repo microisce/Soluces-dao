@@ -1,15 +1,15 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState, ChangeEvent } from "react";
 
 const FileUploaderBox = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const fileInputRef = useRef(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
+  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     const reader = new FileReader();
 
     reader.onload = () => {
-      setSelectedImage(reader.result);
+      setSelectedImage(reader.result as string);
     };
 
     if (file) {
@@ -18,7 +18,7 @@ const FileUploaderBox = () => {
   };
 
   const handleButtonClick = () => {
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   };
 
   return (

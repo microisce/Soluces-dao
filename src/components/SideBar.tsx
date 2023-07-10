@@ -1,6 +1,5 @@
-import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { sideBarStyle } from "../pages/dashboard/styles";
 import { linksType } from "../types/types";
 import "../pages/dashboard/Home.css";
