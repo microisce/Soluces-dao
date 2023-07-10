@@ -1,7 +1,15 @@
-import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-import { userLogin } from "../../api/loaders";
+import { userLogin } from "../../api/Loaders";
+import useDashboardStore from "../../store/useDataStore";
 
 const style = {
   position: "absolute",
@@ -36,6 +44,8 @@ function Login() {
   });
 
   const [disabled, setDisabled] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const setToken = useDashboardStore((v) => v.setToken);
 
   React.useEffect(() => {
     if (formData.email === "" || formData.password === "") {
@@ -46,12 +56,22 @@ function Login() {
   }, [formData]);
 
   const handleLogin = () => {
-    userLogin(formData.email, formData.password)
+    setIsLoading(true);
+    userLogin(formData)
       .then((response) => {
-        console.log(response);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1500);
+
+        setToken(response.access);
+        console.log(response.access);
       })
       .catch((err) => console.log(err));
   };
+
+  if (isLoading) {
+    return <CircularProgress />;
+  }
 
   return (
     <Box sx={style}>
@@ -62,6 +82,7 @@ function Login() {
             marginBottom: 1,
             width: "100%",
           }}
+          type="email"
           id="outlined-basic"
           label="Identifiant"
           variant="outlined"
@@ -79,8 +100,8 @@ function Login() {
             marginBottom: 1,
             width: "100%",
           }}
-          type="Mot de passe"
-          id="outlined-basic"
+          type="password"
+          // id="outlined-basic"
           label="Mot de passe"
           variant="outlined"
           value={formData.password}

@@ -77,3 +77,9 @@ body {
   font-size: 14px;
   height: 60px;
 }
+
+.spinner-container {
+  display: flex;
+  flex: 1;
+  background-color: white;
+}

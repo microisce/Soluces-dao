@@ -6,12 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/auth/Login.tsx";
 import PasswordRestoration from "./pages/auth/PasswordRestoration.tsx";
 import Home from "./pages/dashboard/Home.tsx";
-import Create from "./pages/dashboard/create/Create.tsx";
 import PasswordUpdate from "./pages/auth/PasswordUpdate.tsx";
-import Topbar from "./components/Topbar.tsx";
-import { SideBar } from "./components/SideBar.tsx";
-// import Topbar from "./components/Topbar.tsx";
-// import { SideBar } from "./components/SideBar.tsx";
 
 const router = createBrowserRouter([
   {
