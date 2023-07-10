@@ -1,15 +1,10 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
-import React from "react";
-import { Link } from "react-router-dom";
+import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { userLogin } from "../../api/Loaders";
 import useDashboardStore from "../../store/useDataStore";
+import Loading from "../../components/spinner/Loading";
+// import { toast } from "react-toastify";
 
 const style = {
   position: "absolute",
@@ -45,7 +40,8 @@ function Login() {
 
   const [disabled, setDisabled] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const setToken = useDashboardStore((v) => v.setToken);
+  const { setToken, token } = useDashboardStore();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     if (formData.email === "" || formData.password === "") {
@@ -64,17 +60,24 @@ function Login() {
         }, 1500);
 
         setToken(response.access);
-        console.log(response.access);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  if (isLoading) {
-    return <CircularProgress />;
-  }
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("access_token", token);
+      navigate("/dashboard/besoin");
+    } else {
+      navigate("/");
+    }
+  }, [navigate, token]);
 
   return (
     <Box sx={style}>
+      {isLoading ? <Loading /> : null}
       <Box sx={formStyle}>
         <TextField
           sx={{
