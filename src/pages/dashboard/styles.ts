@@ -6,6 +6,7 @@ export const topBarStyle = {
     width: "100%",
     mt: 0,
     border: "1px solid #000",
+
     // p: 1,
   },
 

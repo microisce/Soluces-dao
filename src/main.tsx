@@ -7,6 +7,8 @@ import Login from "./pages/auth/Login.tsx";
 import PasswordRestoration from "./pages/auth/PasswordRestoration.tsx";
 import Home from "./pages/dashboard/Home.tsx";
 import PasswordUpdate from "./pages/auth/PasswordUpdate.tsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const router = createBrowserRouter([
   {
@@ -51,5 +53,6 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <RouterProvider router={router} />
+    <ToastContainer />
   </React.StrictMode>
 );

@@ -13,3 +13,9 @@ export interface DataType {
   date_modification: string;
   telecharger: string;
 }
+
+export interface IUser {
+  first_name: string;
+  last_name: string;
+  email: string;
+}

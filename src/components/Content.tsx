@@ -9,6 +9,7 @@ import DataTable from "./DataTable";
 import useDashboardStore from "../store/useDataStore";
 import { Link, useLocation } from "react-router-dom";
 import Create from "../pages/dashboard/create/Create";
+import { useEffect } from "react";
 
 // type Props = {}
 
@@ -19,6 +20,12 @@ export const Needs = () => {
   const handleSearchChange = (value: string) => {
     setSearchedValue(value);
   };
+
+  const token = useDashboardStore((v) => v.token);
+
+  useEffect(() => {
+    console.log(token);
+  }, [token]);
 
   return (
     <Box sx={ContentStyle.container}>
