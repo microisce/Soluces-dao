@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import useDashboardStore from "../../store/useDataStore";
 import { getUser } from "../../api/Loaders";
 import { IUser } from "../../types/types";
+import { useNavigate } from "react-router-dom";
 // import useDashboardStore from "../../store/useDataStore";
 // import { getUser } from "../../api/Loaders";
 // import { IUser } from "../../types/types";
@@ -14,10 +15,10 @@ import { IUser } from "../../types/types";
 function Home() {
   const [user, setUser] = useState<IUser>();
   const setToken = useDashboardStore((v) => v.setToken);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("access_token") as string;
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token") as string;
-
     setToken(token);
     getUser(token)
       .then((response) => {
@@ -27,6 +28,12 @@ function Home() {
         console.log(err);
       });
   }, [setToken]);
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    }
+  }, [navigate, token]);
 
   return (
     <div style={{ position: "relative" }}>
