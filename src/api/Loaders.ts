@@ -36,3 +36,35 @@ export const getUser = async (token: string) => {
     return error;
   }
 };
+
+export const getNeedsData = async () => {
+  try {
+    const result = await ApiManager("besoins/list/", {
+      method: "GET",
+    });
+
+    if (result.status === 200) {
+      return result.data;
+    }
+  } catch (error) {
+    return error;
+  }
+};
+
+export const createNeed = async (designation: string) => {
+  try {
+    const result = await ApiManager("besoins/create/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: { designation },
+    });
+
+    if (result.status === 201) {
+      return result.status;
+    }
+  } catch (error) {
+    return error;
+  }
+};
