@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import type { TableRowSelection } from "antd/es/table/interface";
+// import type { TableRowSelection } from "antd/es/table/interface";
 import { DataType } from "../types/types";
 import { Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useDashboardStore from "../store/useDataStore";
 import { getNeedsData } from "../api/Loaders";
+
+const deleteNeed = (rowId: string) => {};
 
 const columns: ColumnsType<DataType> = [
   {
@@ -19,10 +21,10 @@ const columns: ColumnsType<DataType> = [
     title: "Désignation",
     dataIndex: "designation",
   },
-  // {
-  //   title: "Niveau",
-  //   dataIndex: "niveau",
-  // },
+  {
+    title: "Niveau",
+    dataIndex: "niveau",
+  },
   {
     title: "Date d'édition",
     dataIndex: "create_at",
@@ -47,28 +49,14 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
-// Array that holds all data shown on the table
-let data: DataType[] = [];
-
-// for (let i = 0; i < 40; i++) {
-//   data.push({
-//     id: 1,
-//     numero: "EB1",
-//     designation: "None",
-//     create_at: "2023-07-12T14:21:32.003110Z",
-//     update_at: "2023-07-12T14:21:32.156257Z",
-//     zip: null,
-//   });
-// }
-
 const DataTable = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDeleteButton, setShowDeleteButton] = useState<boolean>(false);
   const [filteredData, setFilteredData] = useState<DataType[]>([]);
-  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [tableData, setTableData] = useState<DataType[]>([]);
   const { searchedValue } = useDashboardStore();
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+  const onSelectChange = (newSelectedRowKeys: string[]) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
 
@@ -80,12 +68,24 @@ const DataTable = () => {
   };
 
   useEffect(() => {
-    setFilteredData(data);
+    getNeedsData()
+      .then((result) => {
+        setTableData(result);
+      })
+      .catch((error) => console.log(error));
 
-    const searchedData = data.filter(
+    return () => {
+      tableData;
+    };
+  }, [tableData]);
+
+  useEffect(() => {
+    setFilteredData(tableData);
+
+    const searchedData = tableData.filter(
       (item) =>
         item.numero === searchedValue ||
-        // item.niveau === searchedValue ||
+        // item.ni === searchedValue ||
         item.create_at === searchedValue ||
         item.update_at === searchedValue
     );
@@ -93,61 +93,50 @@ const DataTable = () => {
     if (searchedValue !== "") {
       setFilteredData(searchedData);
     }
-  }, [searchedValue]);
+  }, [searchedValue, tableData]);
 
-  const rowSelection: TableRowSelection<DataType> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-    selections: [
-      Table.SELECTION_ALL,
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
-      {
-        key: "odd",
-        text: "Select Odd Row",
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return false;
-            }
-            return true;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-      {
-        key: "even",
-        text: "Select Even Row",
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return true;
-            }
-            return false;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-    ],
-  };
-
-  useEffect(() => {
-    getNeedsData()
-      .then((result) => {
-        // data = result;
-        result.map((row: DataType) => {
-          data.push(row);
-        });
-      })
-      .catch((error) => console.log(error));
-  }, []);
+  // const rowSelection: TableRowSelection<DataType> = {
+  //   selectedRowKeys,
+  //   onChange: onSelectChange,
+  //   selections: [
+  //     Table.SELECTION_ALL,
+  //     Table.SELECTION_INVERT,
+  //     Table.SELECTION_NONE,
+  //     {
+  //       key: "odd",
+  //       text: "Select Odd Row",
+  //       onSelect: (changeableRowKeys) => {
+  //         let newSelectedRowKeys = [];
+  //         newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
+  //           if (index % 2 !== 0) {
+  //             return false;
+  //           }
+  //           return true;
+  //         });
+  //         setSelectedRowKeys(newSelectedRowKeys);
+  //       },
+  //     },
+  //     {
+  //       key: "even",
+  //       text: "Select Even Row",
+  //       onSelect: (changeableRowKeys) => {
+  //         let newSelectedRowKeys = [];
+  //         newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
+  //           if (index % 2 !== 0) {
+  //             return true;
+  //           }
+  //           return false;
+  //         });
+  //         setSelectedRowKeys(newSelectedRowKeys);
+  //       },
+  //     },
+  //   ],
+  // };
 
   return (
     <div style={{ position: "relative" }}>
       <Table
-        rowSelection={rowSelection}
+        // rowSelection={rowSelection}
         columns={columns}
         dataSource={filteredData}
         bordered={true}

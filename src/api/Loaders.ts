@@ -68,3 +68,17 @@ export const createNeed = async (designation: string) => {
     return error;
   }
 };
+
+export const deleteNeed = async (rowId: string) => {
+  try {
+    const result = await ApiManager(`besoins/delete/${rowId}`, {
+      method: "DELETE",
+    });
+
+    if (result.status === 200) {
+      return result.status;
+    }
+  } catch (error) {
+    return error;
+  }
+};
