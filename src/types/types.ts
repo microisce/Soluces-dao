@@ -5,13 +5,13 @@ export interface linksType {
 }
 
 export interface DataType {
-  key: React.Key;
+  id: number;
   numero: string;
   designation: string;
-  niveau: string;
-  date_edition: string;
-  date_modification: string;
-  telecharger: string;
+  // niveau: string;
+  create_at: string;
+  update_at: string;
+  zip: null;
 }
 
 export interface IUser {

@@ -7,6 +7,7 @@ import { Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useDashboardStore from "../store/useDataStore";
+import { getNeedsData } from "../api/Loaders";
 
 const columns: ColumnsType<DataType> = [
   {
@@ -18,21 +19,21 @@ const columns: ColumnsType<DataType> = [
     title: "Désignation",
     dataIndex: "designation",
   },
-  {
-    title: "Niveau",
-    dataIndex: "niveau",
-  },
+  // {
+  //   title: "Niveau",
+  //   dataIndex: "niveau",
+  // },
   {
     title: "Date d'édition",
-    dataIndex: "date_edition",
+    dataIndex: "create_at",
   },
   {
     title: "Date modification",
-    dataIndex: "date_modification",
+    dataIndex: "update_at",
   },
   {
     title: "Télécharger",
-    dataIndex: "telecharger",
+    dataIndex: "zip",
     render: (text: string) => <a href="">{text}</a>,
   },
   {
@@ -47,19 +48,18 @@ const columns: ColumnsType<DataType> = [
 ];
 
 // Array that holds all data shown on the table
-const data: DataType[] = [];
+let data: DataType[] = [];
 
-for (let i = 0; i < 40; i++) {
-  data.push({
-    key: i,
-    numero: `EB${i}`,
-    designation: "00084561P1_VALOIR",
-    niveau: "SIMPLE",
-    date_edition: "17/06/2023",
-    date_modification: "25/07/2023 ",
-    telecharger: "extract zip",
-  });
-}
+// for (let i = 0; i < 40; i++) {
+//   data.push({
+//     id: 1,
+//     numero: "EB1",
+//     designation: "None",
+//     create_at: "2023-07-12T14:21:32.003110Z",
+//     update_at: "2023-07-12T14:21:32.156257Z",
+//     zip: null,
+//   });
+// }
 
 const DataTable = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -85,9 +85,9 @@ const DataTable = () => {
     const searchedData = data.filter(
       (item) =>
         item.numero === searchedValue ||
-        item.niveau === searchedValue ||
-        item.date_modification === searchedValue ||
-        item.date_edition === searchedValue
+        // item.niveau === searchedValue ||
+        item.create_at === searchedValue ||
+        item.update_at === searchedValue
     );
 
     if (searchedValue !== "") {
@@ -132,6 +132,17 @@ const DataTable = () => {
       },
     ],
   };
+
+  useEffect(() => {
+    getNeedsData()
+      .then((result) => {
+        // data = result;
+        result.map((row: DataType) => {
+          data.push(row);
+        });
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   return (
     <div style={{ position: "relative" }}>
