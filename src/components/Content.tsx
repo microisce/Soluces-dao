@@ -53,6 +53,7 @@ const NeedCreationModal = ({ open, handleClose }: ModalTypes) => {
         if (result === 201) {
           toast.success("Besoin créer avec success");
           handleClose();
+          setDesignation("");
         }
       })
       .catch((error) => {
