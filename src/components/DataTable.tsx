@@ -8,6 +8,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useDashboardStore from "../store/useDataStore";
 import { getNeedsData } from "../api/Loaders";
+import { TableRowSelection } from "antd/es/table/interface";
 
 const deleteNeed = (rowId: string) => {};
 
@@ -95,48 +96,48 @@ const DataTable = () => {
     }
   }, [searchedValue, tableData]);
 
-  // const rowSelection: TableRowSelection<DataType> = {
-  //   selectedRowKeys,
-  //   onChange: onSelectChange,
-  //   selections: [
-  //     Table.SELECTION_ALL,
-  //     Table.SELECTION_INVERT,
-  //     Table.SELECTION_NONE,
-  //     {
-  //       key: "odd",
-  //       text: "Select Odd Row",
-  //       onSelect: (changeableRowKeys) => {
-  //         let newSelectedRowKeys = [];
-  //         newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-  //           if (index % 2 !== 0) {
-  //             return false;
-  //           }
-  //           return true;
-  //         });
-  //         setSelectedRowKeys(newSelectedRowKeys);
-  //       },
-  //     },
-  //     {
-  //       key: "even",
-  //       text: "Select Even Row",
-  //       onSelect: (changeableRowKeys) => {
-  //         let newSelectedRowKeys = [];
-  //         newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-  //           if (index % 2 !== 0) {
-  //             return true;
-  //           }
-  //           return false;
-  //         });
-  //         setSelectedRowKeys(newSelectedRowKeys);
-  //       },
-  //     },
-  //   ],
-  // };
+  const rowSelection: TableRowSelection<DataType> = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+    selections: [
+      Table.SELECTION_ALL,
+      Table.SELECTION_INVERT,
+      Table.SELECTION_NONE,
+      {
+        key: "odd",
+        text: "Select Odd Row",
+        onSelect: (changeableRowKeys) => {
+          let newSelectedRowKeys = [];
+          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
+            if (index % 2 !== 0) {
+              return false;
+            }
+            return true;
+          });
+          setSelectedRowKeys(newSelectedRowKeys);
+        },
+      },
+      {
+        key: "even",
+        text: "Select Even Row",
+        onSelect: (changeableRowKeys) => {
+          let newSelectedRowKeys = [];
+          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
+            if (index % 2 !== 0) {
+              return true;
+            }
+            return false;
+          });
+          setSelectedRowKeys(newSelectedRowKeys);
+        },
+      },
+    ],
+  };
 
   return (
     <div style={{ position: "relative" }}>
       <Table
-        // rowSelection={rowSelection}
+        rowSelection={rowSelection}
         columns={columns}
         dataSource={filteredData}
         bordered={true}
