@@ -63,7 +63,7 @@ const UsersTable = ({ usersData }: UsersTableProps) => {
   }, [searchedValue, usersData]);
 
   return (
-    <Paper sx={{ width: "100%", height: "600px" }}>
+    <Paper sx={{ width: "100%" }}>
       <DataGrid
         rows={filteredData}
         columns={[

@@ -17,6 +17,8 @@ const NeedsContent = () => {
 
   const [open, setOpen] = useState(false);
   const [tableData, setTableData] = useState<DataType[]>([]);
+  // const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
