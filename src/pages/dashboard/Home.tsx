@@ -1,4 +1,3 @@
-import Topbar from "../../components/Topbar";
 import CssBaseline from "@mui/material/CssBaseline";
 import { SideBar } from "../../components/SideBar";
 import Content from "../../components/Content";
@@ -8,9 +7,7 @@ import useDashboardStore from "../../store/useDataStore";
 import { getUser } from "../../api/Loaders";
 import { IUser } from "../../types/types";
 import { useNavigate } from "react-router-dom";
-// import useDashboardStore from "../../store/useDataStore";
-// import { getUser } from "../../api/Loaders";
-// import { IUser } from "../../types/types";
+import TopBar from "../../components/Topbar";
 
 function Home() {
   const [user, setUser] = useState<IUser>();
@@ -18,7 +15,7 @@ function Home() {
   const navigate = useNavigate();
   const token = localStorage.getItem("access_token") as string;
 
-  useEffect(() => {
+  const UserAuthentication = () => {
     setToken(token);
     getUser(token)
       .then((response) => {
@@ -27,7 +24,11 @@ function Home() {
       .catch((err) => {
         console.log(err);
       });
-  }, [setToken]);
+  };
+
+  useEffect(() => {
+    UserAuthentication();
+  }, []);
 
   useEffect(() => {
     if (!token) {
@@ -38,8 +39,7 @@ function Home() {
   return (
     <div style={{ position: "relative" }}>
       <CssBaseline />
-
-      <Topbar user={user as IUser} clearToken={setToken} />
+      <TopBar user={user as IUser} clearToken={setToken} />
       <Box
         sx={{
           display: "flex",

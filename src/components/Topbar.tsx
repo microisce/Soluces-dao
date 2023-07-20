@@ -2,17 +2,17 @@ import SDLogo from "../assets/SD-LOGO.png";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { topBarStyle } from "../pages/dashboard/styles";
-import { IUser } from "../types/types";
+import { IAuth } from "../types/types";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 type TopBarProps = {
-  user: IUser;
+  user: IAuth;
   clearToken: (value: string) => void;
 };
 
-const Topbar = ({ user, clearToken }: TopBarProps) => {
+const TopBar = ({ user, clearToken }: TopBarProps) => {
   const navigate = useNavigate();
 
   const handleLogOut = () => {
@@ -55,4 +55,4 @@ const Topbar = ({ user, clearToken }: TopBarProps) => {
   );
 };
 
-export default Topbar;
+export default TopBar;

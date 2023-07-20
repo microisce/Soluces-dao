@@ -69,13 +69,13 @@ export const createNeed = async (designation: string) => {
   }
 };
 
-export const deleteNeed = async (rowId: string) => {
+export const deleteNeed = async (rowId: number) => {
   try {
-    const result = await ApiManager(`besoins/delete/${rowId}`, {
+    const result = await ApiManager(`besoins/delete/${rowId}/`, {
       method: "DELETE",
     });
 
-    if (result.status === 200) {
+    if (result.status === 204) {
       return result.status;
     }
   } catch (error) {
