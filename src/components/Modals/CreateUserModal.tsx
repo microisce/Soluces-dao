@@ -9,9 +9,11 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { ReactEventHandler, useEffect, useState } from "react";
-import { IUser } from "../../types/types";
+import Select from "@mui/material/Select";
+import { useState } from "react";
+import { NewUserType } from "../../types/types";
+import { createNewUser } from "../../api/Loaders";
+import { toast } from "react-toastify";
 
 const style = {
   position: "absolute" as const,
@@ -28,18 +30,22 @@ const style = {
 type CreateUserModalTypes = {
   open: boolean;
   handleClose: () => void;
+  fetchUsers: () => void;
 };
 
-type NewUserDataState = Omit<IUser, "id">;
-
-const CreateUserModal = ({ open, handleClose }: CreateUserModalTypes) => {
-  const [newUserData, setNewUserData] = useState<NewUserDataState>({
+const CreateUserModal = ({
+  open,
+  handleClose,
+  fetchUsers,
+}: CreateUserModalTypes) => {
+  const [newUserData, setNewUserData] = useState<NewUserType>({
     first_name: "",
     last_name: "",
-    username: "",
-    rang: "",
+    group: "",
     email: "",
   });
+
+  const token: string | null = localStorage.getItem("access_token");
 
   const availableRangs = [
     "administrateur",
@@ -57,8 +63,18 @@ const CreateUserModal = ({ open, handleClose }: CreateUserModalTypes) => {
     setNewUserData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const createNewUser = () => {
-    console.log(newUserData);
+  const handleUserCreation = () => {
+    if (token) {
+      createNewUser(newUserData, token)
+        .then((result) => {
+          if (result === 200) {
+            toast.success("utilisateur creér avec success");
+            fetchUsers();
+            handleClose();
+          }
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   return (
@@ -81,14 +97,6 @@ const CreateUserModal = ({ open, handleClose }: CreateUserModalTypes) => {
             <TextField
               variant="outlined"
               sx={{ width: "100%", marginTop: 3 }}
-              label="Identifiant"
-              name="username"
-              value={newUserData.username}
-              onChange={handleNewUserDataChange}
-            />
-            <TextField
-              variant="outlined"
-              sx={{ width: "100%", marginTop: 3 }}
               label="Nom"
               name="last_name"
               value={newUserData.last_name}
@@ -108,9 +116,9 @@ const CreateUserModal = ({ open, handleClose }: CreateUserModalTypes) => {
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  name="rang"
-                  value={newUserData.rang.toLocaleLowerCase()}
-                  label="Rang"
+                  name="group"
+                  value={newUserData.group.toLocaleLowerCase()}
+                  label="Group"
                   onChange={handleNewUserDataChange}
                 >
                   {availableRangs.map((rang, index) => (
@@ -134,7 +142,7 @@ const CreateUserModal = ({ open, handleClose }: CreateUserModalTypes) => {
             variant="outlined"
             sx={{ mt: 3, p: 1.5 }}
             fullWidth
-            onClick={createNewUser}
+            onClick={handleUserCreation}
           >
             + Créer utilisateur
           </Button>

@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import useDashboardStore from "../store/useDataStore";
-import { DataType, IUser } from "../types/types";
+import { IUser } from "../types/types";
 import DeleteButton from "./DeleteRowButton";
-// import { toast } from "react-toastify";
-// import DeleteButton from "./DeleteRowButton";
-// import { Button, Tooltip } from "antd";
-// import DeleteIcon from "@mui/icons-material/Delete";
-// import moment from "moment";
+import { Paper } from "@mui/material";
 
 const columns: GridColDef[] = [
   {
@@ -16,14 +12,12 @@ const columns: GridColDef[] = [
     width: 200,
   },
   {
-    field: "fullName", // The new column
-    headerName: "Full Name",
+    field: "username", // The new column
+    headerName: "Nom et Prénom",
     width: 200,
-    valueGetter: (params) =>
-      `${params.row.first_name || ""} ${params.row.last_name || ""}`,
   },
   {
-    field: "rang",
+    field: "group",
     headerName: "Rang",
     width: 300,
   },
@@ -34,22 +28,11 @@ const columns: GridColDef[] = [
   },
 ];
 
-// type TableDataProp = {};
+type UsersTableProps = {
+  usersData: IUser[];
+};
 
-const data: IUser[] = [];
-
-for (let i = 0; i < 20; i++) {
-  data.push({
-    id: i,
-    first_name: "oussama",
-    last_name: "chahidi",
-    username: `OUS${i}`,
-    rang: "administrateur",
-    email: `oussama200${i}@gmail.com`,
-  });
-}
-
-const UsersTable = () => {
+const UsersTable = ({ usersData }: UsersTableProps) => {
   const [filteredData, setFilteredData] = useState<IUser[]>([]);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
@@ -68,7 +51,7 @@ const UsersTable = () => {
   };
 
   useEffect(() => {
-    const searchedData = data.filter(
+    const searchedData = usersData.filter(
       (item) =>
         item.username === searchedValue ||
         item.first_name === searchedValue ||
@@ -76,15 +59,11 @@ const UsersTable = () => {
         item.email === searchedValue
     );
 
-    setFilteredData(searchedValue !== "" ? searchedData : data);
-  }, [searchedValue]);
-
-  // useEffect(() => {
-  //   console.log(selectedRows);
-  // }, [selectedRows]);
+    setFilteredData(searchedValue !== "" ? searchedData : usersData);
+  }, [searchedValue, usersData]);
 
   return (
-    <div style={{ position: "relative" }}>
+    <Paper sx={{ width: "100%", height: "600px" }}>
       <DataGrid
         rows={filteredData}
         columns={[
@@ -105,6 +84,7 @@ const UsersTable = () => {
         components={{
           Toolbar: GridToolbar,
         }}
+        autoHeight
         checkboxSelection
         onRowSelectionModelChange={handleSelectionChange}
       />
@@ -115,7 +95,7 @@ const UsersTable = () => {
           <span>Supprimer tout les champs selectionné</span>
         </Button>
       ) : null} */}
-    </div>
+    </Paper>
   );
 };
 

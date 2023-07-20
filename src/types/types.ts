@@ -19,12 +19,19 @@ export interface IAuth {
   last_name: string;
 }
 
+export interface NewUserType {
+  first_name: string;
+  last_name: string;
+  group: string;
+  email: string;
+}
+
 export interface IUser {
   id: number;
   first_name: string;
   last_name: string;
   username: string;
-  rang:
+  group:
     | "administrateur"
     | "externe"
     | "moderateur"

@@ -9,6 +9,8 @@ import Home from "./pages/dashboard/Home.tsx";
 import PasswordUpdate from "./pages/auth/PasswordUpdate.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Create from "./pages/dashboard/create/Create.tsx";
+import TopBar from "./components/Topbar.tsx";
 
 const router = createBrowserRouter([
   {
@@ -43,10 +45,6 @@ const router = createBrowserRouter([
   // {
   //   path: "/dashboard/BD",
   //   element: <h1>Base de données</h1>,
-  // },
-  // {
-  //   path: "/dashboard/admin-console",
-  //   element: <h1>Console administrateur Identifiant</h1>,
   // },
 ]);
 

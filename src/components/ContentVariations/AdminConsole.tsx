@@ -3,14 +3,18 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateUserModal from "../Modals/CreateUserModal";
 import useDashboardStore from "../../store/useDataStore";
 import { ContentStyle } from "../../pages/dashboard/styles";
 import UsersTable from "../UsersTable";
+import { getAllUsers } from "../../api/Loaders";
+import { IUser } from "../../types/types";
 
 const AdminConsole = () => {
   const [open, setOpen] = useState(false);
+  const [usersData, setUserData] = useState<IUser[]>([]);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -19,9 +23,22 @@ const AdminConsole = () => {
   const handleSearchChange = (value: string) => {
     setSearchedValue(value);
   };
+
+  const fetchUsers = () => {
+    getAllUsers()
+      .then((result) => {
+        setUserData(result);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   return (
     <Box sx={ContentStyle.container}>
-      <CreateUserModal {...{ open, handleClose }} />
+      <CreateUserModal {...{ open, handleClose, fetchUsers }} />
       <Box sx={ContentStyle.header}>
         <Typography variant="h4">Console administrateur</Typography>
         <Button
@@ -59,7 +76,7 @@ const AdminConsole = () => {
         </Box>
       </Box>
       <Box sx={{ mt: 5 }}>
-        <UsersTable />
+        <UsersTable usersData={usersData} />
       </Box>
     </Box>
   );
