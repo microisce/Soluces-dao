@@ -8,6 +8,7 @@ import DeleteButton from "./DeleteRowButton";
 import { Button, Tooltip } from "antd";
 import DeleteIcon from "@mui/icons-material/Delete";
 import moment from "moment";
+import { Link } from "react-router-dom";
 
 const columns: GridColDef[] = [
   {
@@ -16,18 +17,18 @@ const columns: GridColDef[] = [
     flex: 1,
     renderCell: (param) => {
       return (
-        <a onClick={(e)=>e.stopPropagation()} href={`/dashboard/create/${param.id}`} style={{ color: "#007FFF" }}>
+        <a
+          onClick={(e) => e.stopPropagation()}
+          href={`/dashboard/create/${param.id}`}
+          style={{ color: "#007FFF" }}
+        >
           {param.value}
         </a>
       );
     },
   },
-  { field: "designation", headerName: "Désignation",
-  flex: 1,
-  },
-  { field: "state", headerName: "Niveau", 
-  flex: 1,
- },
+  { field: "designation", headerName: "Désignation", flex: 1 },
+  { field: "state", headerName: "Niveau", flex: 1 },
   {
     field: "create_at",
     headerName: "Date d'édition",

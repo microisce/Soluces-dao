@@ -10,44 +10,51 @@ import { useNavigate } from "react-router-dom";
 import TopBar from "../../components/Topbar";
 import { useAuthState } from "../../store/auth_store";
 import React from "react";
-import { Toolbar, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Drawer, IconButton, AppBar } from "@mui/material";
+import {
+  Toolbar,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+  Drawer,
+  IconButton,
+  AppBar,
+} from "@mui/material";
 import { Divider, List } from "antd";
 import { Inbox, Mail, Menu as MenuIcon } from "@mui/icons-material";
 import SDLogo from "../../assets/SD-LOGO.png";
-
-
+import { toast } from "react-toastify";
 
 const drawerWidth = 300;
 
-const DrawerMenu =  () => {
+const DrawerMenu = () => {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
- 
- return (<div>
-    <Toolbar >
-    <img
-      src={SDLogo}
-      alt="main_logo"
-      width={200}
-      height={50}
-      style={{ marginTop: 10 }}
-    />
-    </Toolbar>
-    <Divider />
-    <List>
-      {links.map((item, index) => (
-        <ListItem key={item.id} disablePadding>
-          <ListItemButton onClick={()=>navigate(item.path)}>
-            <ListItemIcon>
-             {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={item.text} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
-    <Divider />
-    {/* <List>
+  return (
+    <div>
+      <Toolbar>
+        <img
+          src={SDLogo}
+          alt="main_logo"
+          width={200}
+          height={50}
+          style={{ marginTop: 10 }}
+        />
+      </Toolbar>
+      <Divider />
+      <List>
+        {links.map((item, index) => (
+          <ListItem key={item.id} disablePadding>
+            <ListItemButton onClick={() => navigate(item.path)}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      {/* <List>
       {['All mail', 'Trash', 'Spam'].map((text, index) => (
         <ListItem key={text} disablePadding>
           <ListItemButton>
@@ -59,36 +66,30 @@ const DrawerMenu =  () => {
         </ListItem>
       ))}
     </List> */}
-  </div>
-);
-}
-
+    </div>
+  );
+};
 
 function Home() {
-
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
- 
-  const {is_authenticated, user} = useAuthState()
-  
+
+  const { is_authenticated, user } = useAuthState();
+
   const navigate = useNavigate();
-
-
-
 
   useEffect(() => {
     if (!is_authenticated) {
       navigate("/");
+      toast.warning("You need to login first", { toastId: "1" });
     }
   }, [navigate, is_authenticated]);
 
-  
-
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -103,7 +104,7 @@ function Home() {
             aria-label="open DrawerMenu"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
@@ -111,9 +112,7 @@ function Home() {
             Responsive DrawerMenu
           </Typography> */}
           <TopBar />
-          
         </Toolbar>
-        
       </AppBar>
       <Box
         component="nav"
@@ -130,8 +129,11 @@ function Home() {
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
           }}
         >
           <DrawerMenu />
@@ -139,8 +141,11 @@ function Home() {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
           }}
           open
         >
@@ -149,30 +154,33 @@ function Home() {
       </Box>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+        }}
       >
         <Toolbar />
         <Content />
       </Box>
     </Box>
   );
-    // <div style={{ position: "relative" }}>
-    //   <CssBaseline />
-    //   <TopBar  />
-    //   <Box
-    //     sx={{
-    //       display: "flex",
-    //       justifyContent: "center",
-    //       alignItems: "flex-start",
-    //       flexDirection: "row",
-    //       position: "relative",
-    //     }}
-    //   >
-    //     <SideBar />
-    //     <Content />
-    //   </Box>
-    // </div>
-  
+  // <div style={{ position: "relative" }}>
+  //   <CssBaseline />
+  //   <TopBar  />
+  //   <Box
+  //     sx={{
+  //       display: "flex",
+  //       justifyContent: "center",
+  //       alignItems: "flex-start",
+  //       flexDirection: "row",
+  //       position: "relative",
+  //     }}
+  //   >
+  //     <SideBar />
+  //     <Content />
+  //   </Box>
+  // </div>
 }
 
 export default Home;

@@ -26,7 +26,7 @@ const router = createBrowserRouter([
     element: <PasswordUpdate />,
   },
   {
-    path: "/dashboard/:content",
+    path: "/dashboard/:content/:id?",
     element: <Home />,
   },
 
