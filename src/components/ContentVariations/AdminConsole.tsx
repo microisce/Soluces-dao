@@ -27,7 +27,7 @@ const AdminConsole = () => {
   const fetchUsers = () => {
     getAllUsers()
       .then((result) => {
-        setUserData(result);
+        setUserData(result.results);
       })
       .catch((err) => console.log(err));
   };

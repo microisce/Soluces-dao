@@ -1,11 +1,12 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, ButtonGroup, Grid, Typography } from "@mui/material";
 // import React from "react";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import "./Create.css";
-import { List, Button } from "antd";
 import { styles } from "./styles";
 import FileUploaderBox from "../../../components/FileUploaderBox";
 import TextArea from "antd/es/input/TextArea";
+import { useSearchParams } from "react-router-dom";
+import React from "react";
 
 // type Props = {};
 
@@ -53,10 +54,122 @@ export const BattomForm = () => {
   );
 };
 
-const Create = () => {
+const Details = () => {
+  const queryParameters = new URLSearchParams(window.location.search);
+  const besoinId = queryParameters.get("id");
+
+  const [rightActiveButtonId, setRightActiveButtonId] =
+    React.useState<number>();
+  const [leftActiveButtonId, setLeftActiveButtonId] = React.useState<number>();
+
   return (
-    <div
-      style={{
+    <Grid container>
+      <Grid xs={3}>
+        <ButtonGroup
+          orientation="vertical"
+          sx={{ overflow: "auto", height: "100%", width: "100%" }}
+        >
+          {data.map((value, index) => (
+            <Button
+              onClick={() => setRightActiveButtonId(index)}
+              key={index}
+              variant={rightActiveButtonId == index ? "contained" : "outlined"}
+            >
+              {value}
+            </Button>
+          ))}
+        </ButtonGroup>
+      </Grid>
+      <Grid xs={6}>
+        <Box sx={{ px: 2 }}>
+          <FileUploaderBox />
+          <BattomForm />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mt: 5,
+              width: "100%",
+            }}
+          >
+            <Button
+              variant="outlined"
+              sx={{
+                border: "1px solid #0a76cf",
+                color: "#0a76cf",
+                backgroundColor: "transparent",
+                borderRadius: 5,
+              }}
+            >
+              Precedent
+            </Button>
+            <Box>
+              <Button
+                variant="outlined"
+                sx={{
+                  color: "#fff",
+                  backgroundColor: "red",
+                  borderRadius: 5,
+                  marginRight: 10,
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{
+                  color: "#fff",
+                  backgroundColor: "green",
+                  borderRadius: 5,
+                }}
+              >
+                Ok
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      </Grid>
+      <Grid xs={3}>
+        <ButtonGroup
+          orientation="vertical"
+          sx={{ overflow: "auto", height: "50%", width: "100%" }}
+        >
+          {data.map((value, index) => (
+            <Button
+              key={index}
+              onClick={() => setLeftActiveButtonId(index)}
+              variant={leftActiveButtonId == index ? "contained" : "outlined"}
+            >
+              {value}
+            </Button>
+          ))}
+        </ButtonGroup>
+        <ButtonGroup
+          orientation="vertical"
+          sx={{ overflow: "auto", height: "60%", width: "100%" }}
+        >
+          {data.map((value, index) => (
+            <Button
+              key={index}
+              onClick={() => setLeftActiveButtonId(index)}
+              variant={leftActiveButtonId == index ? "contained" : "outlined"}
+            >
+              {value}
+            </Button>
+          ))}
+        </ButtonGroup>
+      </Grid>
+    </Grid>
+  );
+};
+
+export default Details;
+
+/*
+  return (
+    <Box
+      sx={{
         position: "relative",
         width: "80%",
         // marginTop: 30,
@@ -82,8 +195,31 @@ const Create = () => {
       </div>
       <div className="formContainer">
         <Box sx={styles.scrollBoxes}>
-          <List
-            size="small"
+          <Box
+            sx={{
+              display: "flex",
+              "& > *": {
+                m: 1,
+              },
+              border: "1px solid #dedede",
+            }}
+          >
+            <ButtonGroup
+              orientation="vertical"
+              aria-label="vertical outlined button group"
+            >
+              {data.map((value, index) => (
+                <Button
+                  key={index}
+                  variant={index == 0 ? "contained" : "outlined"}
+                >
+                  {value}
+                </Button>
+              ))}
+            </ButtonGroup>
+          </Box>
+          {/* <List
+            size="large"
             bordered
             dataSource={data}
             renderItem={(item) => (
@@ -94,7 +230,7 @@ const Create = () => {
               </List.Item>
             )}
             style={{ height: "100%", width: 250, overflow: "scroll" }}
-          />
+          /> 
           <Box sx={styles.FileBox}>
             <FileUploaderBox />
             <BattomForm />
@@ -106,7 +242,7 @@ const Create = () => {
               dataSource={data}
               renderItem={(item) => (
                 <List.Item>
-                  <Button type="text" style={{ color: "#0a76cf" }}>
+                  <Button variant="text" style={{ color: "#0a76cf" }}>
                     {item}
                   </Button>
                 </List.Item>
@@ -123,7 +259,7 @@ const Create = () => {
               dataSource={data}
               renderItem={(item) => (
                 <List.Item>
-                  <Button type="text" style={{ color: "#0a76cf" }}>
+                  <Button variant="text" style={{ color: "#0a76cf" }}>
                     {item}
                   </Button>
                 </List.Item>
@@ -138,7 +274,7 @@ const Create = () => {
           </Box>
         </Box>
       </div>
-      <div className="buttons-container">
+       <div className="buttons-container">
         <Button
           type="default"
           style={{
@@ -173,9 +309,6 @@ const Create = () => {
             Ok
           </Button>
         </div>
-      </div>
-    </div>
-  );
-};
-
-export default Create;
+      </div> 
+    </Box>
+  );*/

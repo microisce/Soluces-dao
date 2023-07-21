@@ -42,12 +42,10 @@ export const NeedCreationModal = ({
 
     createNeed(designation)
       .then((result) => {
-        if (result === 201) {
-          toast.success("Besoin créer avec success");
-          handleClose();
-          setDesignation("");
-          fetchTableData();
-        }
+        toast.success("Besoin créer avec success");
+        handleClose();
+        setDesignation("");
+        // fetchTableData();
       })
       .catch((error) => {
         toast.error(error.message);

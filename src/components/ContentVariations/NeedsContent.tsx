@@ -29,7 +29,7 @@ const NeedsContent = () => {
   const fetchTableData = () => {
     getNeedsData()
       .then((result) => {
-        setTableData(result);
+        setTableData(result.results);
       })
       .catch((error) => console.log(error));
   };

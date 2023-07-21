@@ -1,22 +1,24 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
 
-import Create from "../pages/dashboard/create/Create";
+import Details from "../pages/dashboard/create/Details";
 import AdminConsole from "./ContentVariations/AdminConsole";
 import NeedsContent from "./ContentVariations/NeedsContent";
 import { Typography } from "@mui/material";
 
 const Content = () => {
   const location = useLocation();
+  // console.log(params.keys());
 
   switch (location.pathname) {
     case "/dashboard/besoin":
       return <NeedsContent />;
-    case "/dashboard/create/:id":
-      return <Create />;
+    case "/dashboard/details":
+      return <Details />;
     case "/dashboard/admin-console":
       return <AdminConsole />;
 
-    default: <Typography>Page en cours de construction</Typography>
+    default:
+      <Typography>Page en cours de construction</Typography>;
   }
 };
 
