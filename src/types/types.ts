@@ -2,6 +2,7 @@ export interface linksType {
   id: number;
   path: string;
   text: string;
+  icon: React.ReactNode
 }
 
 export interface DataType {

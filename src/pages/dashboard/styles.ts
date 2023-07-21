@@ -3,9 +3,9 @@ export const topBarStyle = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "100%",
+    width: "calc(100%-240px)",
     mt: 0,
-    border: "1px solid #000",
+    //border: "1px solid #000",
 
     // p: 1,
   },
@@ -37,7 +37,7 @@ export const sideBarStyle = {
 
 export const ContentStyle = {
   container: {
-    border: "1px solid #000",
+    
 
     borderTop: 0,
     position: "relative",

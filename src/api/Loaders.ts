@@ -1,119 +1,99 @@
 import { toast } from "react-toastify";
-import ApiManager from "./ApiManager";
+import {http, no_auth_http} from "./ApiManager";
 import { NewUserType } from "../types/types";
+import { vanillaAuthState } from "../store/auth_store";
 
-export const userLogin = async (data: { email: string; password: string }) => {
+export const userLogin = async (data: { email: string; password: string }): Promise<boolean> => {
+
   try {
-    const result = await ApiManager("login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    });
-
-    if (result.status === 200) {
-      toast.success("User Logged In successfully");
-      return result.data;
+    const response = await no_auth_http("login/", {method: 'post', data})
+    if (response && response.status == 200){
+        console.log(response.data)
+        //toast.success("Bonjour");
+        vanillaAuthState.getState().set_tokens(response.data)
+        return Promise.resolve(true)
     }
-  } catch (error) {
-    return error;
-  }
+    return Promise.resolve(false)
+    } catch (error) {
+        console.log(error)
+        return Promise.resolve(false)
+    }
 };
 
-export const getUser = async (token: string) => {
+export const getUser = async () => {
   try {
-    const result = await ApiManager("me/", {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    });
-
-    if (result.status === 200) {
-      return result.data;
+    const response = await http.get("me/");
+    if (response && response.status == 200){
+      return response.data
     }
   } catch (error) {
-    return error;
+    console.log(error)
   }
 };
 
 export const getNeedsData = async () => {
   try {
-    const result = await ApiManager("besoins/list/", {
-      method: "GET",
-    });
-
-    if (result.status === 200) {
-      return result.data;
+    const response = await http.get("besoins/list/");
+    if (response && response.status == 200){
+      return response.data
     }
   } catch (error) {
-    return error;
+    console.log(error)
   }
 };
 
 export const createNeed = async (designation: string) => {
   try {
-    const result = await ApiManager("besoins/create/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: { designation },
-    });
-
-    if (result.status === 201) {
-      return result.status;
+    const response = await http.post("besoins/create/", {designation});
+    if (response && response.status == 201){
+      Promise.resolve()
     }
   } catch (error) {
-    return error;
+    console.log(error)
+    return Promise.reject(error)
   }
 };
 
 export const deleteNeed = async (rowId: number) => {
   try {
-    const result = await ApiManager(`besoins/delete/${rowId}/`, {
-      method: "DELETE",
-    });
-
-    if (result.status === 204) {
-      return result.status;
+    
+    const response = await http.del(`besoins/delete/${rowId}/`);
+    if (response && response.status == 204){
+      return Promise.resolve()
     }
+    return Promise.reject()
   } catch (error) {
-    return error;
+    console.error(error)
+    return Promise.reject()
   }
 };
 
-export const createNewUser = async (data: NewUserType, token: string) => {
+export const createNewUser = async (data: NewUserType) => {
   try {
-    const result = await ApiManager("/create_account/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-
-      data,
-    });
-
-    if (result.status === 200) {
-      return result.status;
+    
+    const response = await http.post("/create_account/", {...data});
+    if (response && response.status == 200){
+      return Promise.resolve()
     }
+    return Promise.reject()
+
+   
   } catch (error) {
-    return error;
+    console.error(error)
+    return Promise.reject()
   }
 };
 
 export const getAllUsers = async () => {
   try {
-    const result = await ApiManager("/users/", {
-      method: "GET",
-    });
-
-    if (result.status === 200) {
-      return result.data;
+    
+    const response = await http.get("/users/");
+    if (response && response.status == 200){
+      return response.data
     }
+    return []
   } catch (error) {
-    return error;
+    console.error(error)
+    return []
   }
 };

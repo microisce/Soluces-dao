@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { userLogin } from "../../api/Loaders";
 import useDashboardStore from "../../store/useDataStore";
 import Loading from "../../components/spinner/Loading";
+import { useAuthState } from "../../store/auth_store";
 // import { toast } from "react-toastify";
 
 const style = {
@@ -40,7 +41,7 @@ function Login() {
 
   const [disabled, setDisabled] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const { setToken, token } = useDashboardStore();
+  const {is_authenticated} = useAuthState()
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -54,26 +55,20 @@ function Login() {
   const handleLogin = () => {
     setIsLoading(true);
     userLogin(formData)
-      .then((response) => {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1500);
-
-        setToken(response.access);
-      })
       .catch((err) => {
         console.log(err);
-      });
+    }).finally(()=>{
+      setIsLoading(false);
+    })
   };
 
   useEffect(() => {
-    if (token) {
-      localStorage.setItem("access_token", token);
+    if (is_authenticated) {
       navigate("/dashboard/besoin");
     } else {
-      navigate("/");
+      //navigate("/");
     }
-  }, [navigate, token]);
+  }, [navigate, is_authenticated]);
 
   return (
     <Box sx={style}>

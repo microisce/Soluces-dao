@@ -1,25 +1,127 @@
 import SDLogo from "../assets/SD-LOGO.png";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import { topBarStyle } from "../pages/dashboard/styles";
 import { IAuth } from "../types/types";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { vanillaAuthState } from "../store/auth_store";
 
-type TopBarProps = {
-  user: IAuth;
-  clearToken: (value: string) => void;
-};
 
-const TopBar = ({ user, clearToken }: TopBarProps) => {
-  const navigate = useNavigate();
+
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+import Settings from '@mui/icons-material/Settings';
+import Logout from '@mui/icons-material/Logout';
+
+export default function AccountMenu() {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+    
+  };
+  return (
+    <React.Fragment>
+      <Box width={'100%'} sx={{ 
+        display: 'flex', alignItems: 'center', textAlign: 'center', justifySelf:'flex-end', justifyContent: 'flex-end' }}>
+        {/* <Typography sx={{ minWidth: 100 }}>Contact</Typography>
+        <Typography sx={{ minWidth: 100 }}>Profile</Typography> */}
+        <Tooltip title="Account settings">
+          <IconButton
+            onClick={handleClick}
+            size="small"
+            sx={{ ml: 2 }}
+            aria-controls={open ? 'account-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+          >
+            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+          </IconButton>
+        </Tooltip>
+      </Box>
+      <Menu
+        //sx={{backgroundColor: 'red'}}
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={open}
+        onClose={handleClose}
+        onClick={handleClose}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            mt: 1.5,
+            '& .MuiAvatar-root': {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            '&:before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: 'background.paper',
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        {/* <MenuItem onClick={handleClose}>
+          <Avatar /> Profile
+        </MenuItem> */}
+        {/* <MenuItem onClick={handleClose}>
+          <Avatar /> My account
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <PersonAdd fontSize="small" />
+          </ListItemIcon>
+          Add another account
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <Settings fontSize="small" />
+          </ListItemIcon>
+          Settings
+        </MenuItem> */}
+        <MenuItem onClick={()=>{vanillaAuthState.getState().logout();handleClose}}>
+          <ListItemIcon>
+            <Logout fontSize="small"  />
+          </ListItemIcon>
+          Fermeture de session
+        </MenuItem>
+      </Menu>
+    </React.Fragment>
+  );
+}
+
+
+const TopBar = () => {
 
   const handleLogOut = () => {
-    localStorage.clear();
-    clearToken("");
-    navigate("/");
-    toast.success("Logout successfully");
+    vanillaAuthState.getState().logout()
+    //toast.success("Dec");
   };
 
   return (
@@ -30,29 +132,27 @@ const TopBar = ({ user, clearToken }: TopBarProps) => {
           alt="main_logo"
           width={200}
           height={50}
-          style={{ border: "1px solid #000", margin: 10 }}
+          style={{ margin: 10 }}
         />
-        <Typography variant="h5">
-          Bonjour Mr {user?.first_name} {user?.last_name}
-        </Typography>
+        {/* <Typography variant="h5">
+          Bonjour Mr 
+        </Typography> */}
       </Box>
       <Box
         sx={{
           flexDirection: "row",
           display: "flex",
           justifyContent: "center",
-          pr: 10,
+          //pr: 10,
         }}
       >
-        <Typography variant="h5" sx={{ mr: 5 }}>
-          RIT ADMIN
-        </Typography>
+        
         <Button variant="text" onClick={handleLogOut}>
-          Logout
+          Fermeture de session
         </Button>
       </Box>
     </Box>
   );
 };
 
-export default TopBar;
+//export default TopBar;

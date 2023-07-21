@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridToolbar, frFR } from "@mui/x-data-grid";
 import useDashboardStore from "../store/useDataStore";
 import { deleteNeed } from "../api/Loaders";
 import { DataType } from "../types/types";
@@ -13,21 +13,25 @@ const columns: GridColDef[] = [
   {
     field: "numero",
     headerName: "#Numéro",
-    width: 100,
+    flex: 1,
     renderCell: (param) => {
       return (
-        <a href={`/dashboard/create/${param.id}`} style={{ color: "#007FFF" }}>
+        <a onClick={(e)=>e.stopPropagation()} href={`/dashboard/create/${param.id}`} style={{ color: "#007FFF" }}>
           {param.value}
         </a>
       );
     },
   },
-  { field: "designation", headerName: "Désignation", width: 150 },
-  { field: "state", headerName: "Niveau", width: 150 },
+  { field: "designation", headerName: "Désignation",
+  flex: 1,
+  },
+  { field: "state", headerName: "Niveau", 
+  flex: 1,
+ },
   {
     field: "create_at",
     headerName: "Date d'édition",
-    width: 300,
+    flex: 1,
     renderCell: (param) => {
       return <p>{moment(param.value).format("DD/MM/YY")}</p>;
     },
@@ -35,7 +39,7 @@ const columns: GridColDef[] = [
   {
     field: "update_at",
     headerName: "Date de modification",
-    width: 300,
+    flex: 1,
     renderCell: (param) => {
       return <p>{moment(param.value).format("DD/MM/YY")}</p>;
     },
@@ -58,10 +62,8 @@ const NeedsTable = ({ data, fetchData }: TableDataProp) => {
       const rowId = params.row.id;
       deleteNeed(rowId)
         .then((result) => {
-          if (result) {
-            toast.success("Besoin supprimer");
-            fetchData();
-          }
+          toast.success("Besoin supprimer");
+          fetchData();
         })
         .catch((error) => {
           console.log(error);
@@ -91,13 +93,11 @@ const NeedsTable = ({ data, fetchData }: TableDataProp) => {
     selectedRows.forEach((row: number) => {
       console.log(row);
       deleteNeed(row)
-        .then((result) => {
-          if (result) {
-            toast.success("Champs supprimé avec success", {
-              toastId: "1",
-            });
-            fetchData();
-          }
+        .then(() => {
+          toast.success("Besoins supprimés avec succés", {
+            toastId: "1",
+          });
+          fetchData();
         })
         .catch((err) => {
           console.log(err);
@@ -119,6 +119,7 @@ const NeedsTable = ({ data, fetchData }: TableDataProp) => {
   return (
     <div style={{ position: "relative" }}>
       <DataGrid
+        localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
         rows={filteredData}
         columns={[
           ...columns,
@@ -126,7 +127,7 @@ const NeedsTable = ({ data, fetchData }: TableDataProp) => {
             field: "Telecharger",
             headerName: "Télécharger",
             sortable: false,
-            width: 200,
+            flex: 1,
             renderCell: renderFileDownloadCell,
           },
           {
@@ -146,6 +147,7 @@ const NeedsTable = ({ data, fetchData }: TableDataProp) => {
           Toolbar: GridToolbar,
         }}
         checkboxSelection
+        disableRowSelectionOnClick
         onRowSelectionModelChange={handleSelectionChange}
       />
 

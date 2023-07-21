@@ -65,13 +65,11 @@ const CreateUserModal = ({
 
   const handleUserCreation = () => {
     if (token) {
-      createNewUser(newUserData, token)
-        .then((result) => {
-          if (result === 200) {
-            toast.success("utilisateur creér avec success");
+      createNewUser(newUserData)
+        .then(() => {
+          toast.success("utilisateur creér avec success");
             fetchUsers();
             handleClose();
-          }
         })
         .catch((err) => console.log(err));
     }
