@@ -3,28 +3,31 @@ import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import useDashboardStore from "../store/useDataStore";
 import { IUser } from "../types/types";
 import DeleteButton from "./DeleteRowButton";
-import { Paper } from "@mui/material";
+import { Button, Paper } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { deleteUser } from "../api/Loaders";
 
 const columns: GridColDef[] = [
   {
     field: "username",
     headerName: "Identifiant",
-    width: 200,
+    flex: 1,
   },
   {
-    field: "username", // The new column
+    field: "Nom et Prénom",
     headerName: "Nom et Prénom",
-    width: 200,
+    valueGetter: ({ row }) => `${row.first_name} ${row.last_name}`,
+    flex: 1,
   },
   {
     field: "group",
     headerName: "Rang",
-    width: 300,
+    flex: 1,
   },
   {
     field: "email",
     headerName: "Adresse mail",
-    width: 300,
+    flex: 1,
   },
 ];
 
@@ -38,8 +41,31 @@ const UsersTable = ({ usersData }: UsersTableProps) => {
 
   const { searchedValue } = useDashboardStore();
 
-  const renderDeleteCell = () => {
-    return <DeleteButton onClick={() => console.log("waiting")} />;
+  const renderDeleteCell = (params: { row: { id: number } }) => {
+    const handleDeleteClick = () => {
+      const rowId = params.row.id;
+      deleteUser(rowId)
+        .then((data) => {
+          setFilteredData(data.results);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    return <DeleteButton onClick={handleDeleteClick} />;
+  };
+
+  const deleteMultipleSelectedRows = () => {
+    selectedRows.forEach((rowId: number) => {
+      deleteUser(rowId)
+        .then((data) => {
+          setFilteredData(data.results);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
   };
 
   const handleSelectionChange = (selectionModel: number[]) => {
@@ -86,15 +112,16 @@ const UsersTable = ({ usersData }: UsersTableProps) => {
         }}
         autoHeight
         checkboxSelection
+        disableRowSelectionOnClick
         onRowSelectionModelChange={handleSelectionChange}
       />
 
-      {/* {selectedRows?.length > 0 ? (
+      {selectedRows?.length > 0 ? (
         <Button className="deleteButton" onClick={deleteMultipleSelectedRows}>
           <DeleteIcon />
           <span>Supprimer tout les champs selectionné</span>
         </Button>
-      ) : null} */}
+      ) : null}
     </Paper>
   );
 };

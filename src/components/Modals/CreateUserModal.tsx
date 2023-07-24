@@ -11,9 +11,10 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useState } from "react";
-import { NewUserType } from "../../types/types";
+import { IUser, NewUserType } from "../../types/types";
 import { createNewUser } from "../../api/Loaders";
 import { toast } from "react-toastify";
+import { Formik, useFormik } from "formik";
 
 const style = {
   position: "absolute" as const,
@@ -68,8 +69,15 @@ const CreateUserModal = ({
       createNewUser(newUserData)
         .then(() => {
           toast.success("utilisateur creér avec success");
-            fetchUsers();
-            handleClose();
+          fetchUsers();
+          handleClose();
+
+          setNewUserData({
+            first_name: "",
+            last_name: "",
+            group: "",
+            email: "",
+          });
         })
         .catch((err) => console.log(err));
     }
