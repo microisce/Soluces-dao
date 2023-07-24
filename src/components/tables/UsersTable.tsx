@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
-import useDashboardStore from "../store/useDataStore";
-import { IUser } from "../types/types";
-import DeleteButton from "./DeleteRowButton";
+import useDashboardStore from "../../store/useDataStore";
+import { IUser } from "../../types/types";
+import DeleteButton from "../DeleteRowButton";
 import { Button, Paper } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { deleteUser } from "../api/Loaders";
+import { deleteUser } from "../../api/Loaders";
 
 const columns: GridColDef[] = [
   {
@@ -91,6 +91,7 @@ const UsersTable = ({ usersData }: UsersTableProps) => {
   return (
     <Paper sx={{ width: "100%" }}>
       <DataGrid
+        localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
         rows={filteredData}
         columns={[
           ...columns,

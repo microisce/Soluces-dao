@@ -14,7 +14,6 @@ import { useState } from "react";
 import { IUser, NewUserType } from "../../types/types";
 import { createNewUser } from "../../api/Loaders";
 import { toast } from "react-toastify";
-import { Formik, useFormik } from "formik";
 
 const style = {
   position: "absolute" as const,

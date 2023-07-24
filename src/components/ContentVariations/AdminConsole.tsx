@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import CreateUserModal from "../Modals/CreateUserModal";
 import useDashboardStore from "../../store/useDataStore";
 import { ContentStyle } from "../../pages/dashboard/styles";
-import UsersTable from "../UsersTable";
+import UsersTable from "../tables/UsersTable";
 import { getAllUsers } from "../../api/Loaders";
 import { IUser } from "../../types/types";
 

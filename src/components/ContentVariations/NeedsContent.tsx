@@ -10,7 +10,7 @@ import { getNeedsData } from "../../api/Loaders";
 import { ContentStyle } from "../../pages/dashboard/styles";
 import { NeedCreationModal } from "../Modals/CreateNeedModal";
 import FilterButton from "../FilterButton";
-import NeedsTable from "../NeedsTable";
+import NeedsTable from "../tables/NeedsTable";
 
 const NeedsContent = () => {
   const { setSearchedValue } = useDashboardStore();

@@ -4,55 +4,60 @@ import { sideBarStyle } from "../pages/dashboard/styles";
 import { linksType } from "../types/types";
 import "../pages/dashboard/Home.css";
 import React from "react";
-import { AccountBox, AdminPanelSettings, List, Mail, Storage } from "@mui/icons-material";
+import {
+  AccountBox,
+  AdminPanelSettings,
+  List,
+  Mail,
+  Storage,
+} from "@mui/icons-material";
 
 export const links: linksType[] = [
   {
     id: 1,
     path: "/dashboard/besoin",
     text: "Expression de besoin",
-    icon: <List />
+    icon: <List />,
   },
   {
     id: 2,
     path: "/dashboard/profil",
     text: "Profil utilisateur",
-    icon: <AccountBox />
+    icon: <AccountBox />,
   },
   {
     id: 3,
     path: "/dashboard/historique",
     text: "Historique",
-    icon: <List />
+    icon: <List />,
   },
   {
     id: 4,
     path: "/dashboard/pointage",
     text: "Pointage",
-    icon: <Mail />
+    icon: <Mail />,
   },
   {
     id: 5,
-    path: "/dashboard/BD",
+    path: "/dashboard/data-base",
     text: "Base de données",
-    icon: <Storage />
+    icon: <Storage />,
   },
   {
     id: 6,
     path: "/dashboard/admin-console",
     text: "Console administrateur ",
-    icon: <AdminPanelSettings />
+    icon: <AdminPanelSettings />,
   },
 ];
 
 export const SideBar = () => {
-
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  
+
   return (
     <Box sx={sideBarStyle.container}>
       <Box sx={sideBarStyle.linksContainer}>
