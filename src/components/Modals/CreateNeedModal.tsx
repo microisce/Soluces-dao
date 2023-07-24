@@ -45,7 +45,7 @@ export const NeedCreationModal = ({
         toast.success("Besoin créer avec success");
         handleClose();
         setDesignation("");
-        // fetchTableData();
+        fetchTableData();
       })
       .catch((error) => {
         toast.error(error.message);

@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Grid, Typography } from "@mui/material";
+import { Box, Button, ButtonGroup, Grid, Stack, Typography } from "@mui/material";
 // import React from "react";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import "./Create.css";
@@ -7,6 +7,8 @@ import FileUploaderBox from "../../../components/FileUploaderBox";
 import TextArea from "antd/es/input/TextArea";
 import { useSearchParams } from "react-router-dom";
 import React from "react";
+import { useBesoinState } from "../../../store/besoin_store";
+import moment from "moment";
 
 // type Props = {};
 
@@ -23,14 +25,14 @@ const data = [
   "Item 10",
 ];
 
-export const BattomForm = () => {
+export const InputForm = () => {
   return (
-    <>
+    <Stack>
       <Box>
         <Typography sx={{ mt: 2 }}>Aide utilisateur</Typography>
-        <TextArea rows={4} style={{ marginTop: 5 }} />
+        <TextArea rows={3} style={{ marginTop: 5 }} />
         <Typography sx={{ mt: 2 }}>Commentaire utilisateur</Typography>
-        <TextArea rows={4} style={{ marginTop: 5 }} />
+        <TextArea rows={3} style={{ marginTop: 5 }} />
       </Box>
       <Box
         sx={{
@@ -43,14 +45,14 @@ export const BattomForm = () => {
       >
         <Box sx={{ width: "100%" }}>
           <Typography sx={{ mt: 2 }}>Document utils</Typography>
-          <TextArea rows={4} style={{ marginTop: 5 }} />
+          <TextArea rows={2} style={{ marginTop: 2 }} />
         </Box>
         <Box sx={{ width: "100%" }}>
           <Typography sx={{ mt: 2 }}>Glisser/déposer Document</Typography>
-          <TextArea rows={4} style={{ marginTop: 5 }} />
+          <TextArea rows={3} style={{ marginTop: 2 }} />
         </Box>
       </Box>
-    </>
+    </Stack>
   );
 };
 
@@ -58,32 +60,76 @@ const Details = () => {
   const queryParameters = new URLSearchParams(window.location.search);
   const besoinId = queryParameters.get("id");
 
+  const {active_besoin, step_list, active_step} = useBesoinState()
+
+
   const [rightActiveButtonId, setRightActiveButtonId] =
     React.useState<number>();
   const [leftActiveButtonId, setLeftActiveButtonId] = React.useState<number>();
 
+
+
+
+
+
   return (
     <Grid container>
+      <Grid xs={12} container height={'80px'}>
+        <Grid xs={3} flexDirection={'column'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+
+          <Typography variant='body2'>
+            Numero d'identification
+          </Typography>
+          <Typography>
+            {active_besoin?.id?? "1"}
+          </Typography>
+
+        </Grid>
+        <Grid xs={6} flexDirection={'column'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+
+          <Typography variant='body2'>
+              Designation
+            </Typography>
+            <Typography>
+              {active_besoin?.designation?? "EB12"}
+            </Typography>
+        </Grid>
+        <Grid xs={3} flexDirection={'column'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+
+            <Typography variant='body2'>
+              Derniere modification
+            </Typography>
+            <Typography>
+              {moment(active_besoin?.update_at?? new Date).calendar()}
+            </Typography>
+        </Grid>
+      </Grid>
       <Grid xs={3}>
+        <Typography width={'100%'} variant='body2' textAlign={'center'}>
+              Liste d'etape
+          </Typography>
         <ButtonGroup
           orientation="vertical"
           sx={{ overflow: "auto", height: "100%", width: "100%" }}
         >
-          {data.map((value, index) => (
+          {data.slice(4).map((value, index) => (
             <Button
               onClick={() => setRightActiveButtonId(index)}
               key={index}
               variant={rightActiveButtonId == index ? "contained" : "outlined"}
             >
-              {value}
+              AP {index+1}
             </Button>
           ))}
         </ButtonGroup>
       </Grid>
       <Grid xs={6}>
+          <Typography width={'100%'} variant='body2' textAlign={'center'}>
+              Description
+          </Typography>
         <Box sx={{ px: 2 }}>
           <FileUploaderBox />
-          <BattomForm />
+          <InputForm />
           <Box
             sx={{
               display: "flex",
@@ -104,6 +150,19 @@ const Details = () => {
             >
               Precedent
             </Button>
+            <Box onClick={()=>{console.log('later')}}>
+            <Typography
+              
+              sx={{
+                color: "#0a76cf",
+                cursor: 'pointer',
+                textDecorationLine: 'underline'
+              }}
+            >
+              terminer plus tard
+            </Typography>
+            </Box>
+            
             <Box>
               <Button
                 variant="outlined"
@@ -114,7 +173,7 @@ const Details = () => {
                   marginRight: 10,
                 }}
               >
-                Cancel
+                NOK
               </Button>
               <Button
                 variant="outlined"
@@ -124,38 +183,46 @@ const Details = () => {
                   borderRadius: 5,
                 }}
               >
-                Ok
+                OK
               </Button>
             </Box>
           </Box>
         </Box>
       </Grid>
       <Grid xs={3}>
+        <Typography width={'100%'} variant='body2' textAlign={'center'}>
+              Liste de criteres
+          </Typography>
         <ButtonGroup
           orientation="vertical"
-          sx={{ overflow: "auto", height: "50%", width: "100%" }}
+          sx={{ overflow: "auto", width: "100%" }}
         >
-          {data.map((value, index) => (
+          {data.slice(0,6).map((value, index) => (
             <Button
+              sx={{textAlign: 'left'}}
+
               key={index}
               onClick={() => setLeftActiveButtonId(index)}
               variant={leftActiveButtonId == index ? "contained" : "outlined"}
             >
-              {value}
+              CONDITION {index +1}
             </Button>
           ))}
         </ButtonGroup>
+        <Typography width={'100%'} variant='body2' textAlign={'center'} pt={2}>
+              Choix utilisateur
+          </Typography>
         <ButtonGroup
           orientation="vertical"
-          sx={{ overflow: "auto", height: "60%", width: "100%" }}
+          sx={{ overflow: "auto",  width: "100%" }}
         >
-          {data.map((value, index) => (
+          {data.slice(0,3).map((value, index) => (
             <Button
               key={index}
-              onClick={() => setLeftActiveButtonId(index)}
-              variant={leftActiveButtonId == index ? "contained" : "outlined"}
+              //onClick={() => setLeftActiveButtonId(index)}
+              //variant={leftActiveButtonId == index ? "contained" : "outlined"}
             >
-              {value}
+              CHOIX {index+1}
             </Button>
           ))}
         </ButtonGroup>
@@ -233,7 +300,7 @@ export default Details;
           /> 
           <Box sx={styles.FileBox}>
             <FileUploaderBox />
-            <BattomForm />
+            <InputForm />
           </Box>
           <Box>
             <List
