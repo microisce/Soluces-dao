@@ -12,6 +12,8 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import TextArea from "antd/es/input/TextArea";
+import { DataBaseTypes } from "../../types/types";
+import { useState } from "react";
 
 const style = {
   position: "absolute" as const,
@@ -34,6 +36,22 @@ type CreateDataModalProps = {
 };
 
 const CreateDataModal = ({ open, handleClose }: CreateDataModalProps) => {
+  const [data, setData] = useState<DataBaseTypes>({
+    family_code: "",
+    id_code: "",
+    icon: "",
+    title: "",
+    description: "",
+    file: "",
+    item: "",
+    condition: "",
+    help: "",
+    comment: "",
+    document: "",
+    complexity: "",
+    right: "",
+  });
+
   const availableRangs = [
     "administrateur",
     "externe",
@@ -43,6 +61,19 @@ const CreateDataModal = ({ open, handleClose }: CreateDataModalProps) => {
     "formation",
     "client",
   ];
+
+  const handleValuesChange = (e: {
+    target: { name: string; value: string };
+  }) => {
+    setData((prevData) => ({
+      ...prevData,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const submitData = () => {
+    console.log(data);
+  };
 
   return (
     <div>
@@ -75,32 +106,59 @@ const CreateDataModal = ({ open, handleClose }: CreateDataModalProps) => {
               variant="outlined"
               sx={{ width: "100%" }}
               label="Code famille"
-              name="code_famille"
+              name="family_code"
+              value={data.family_code}
+              onChange={handleValuesChange}
             />
             <TextField
               variant="outlined"
               sx={{ width: "100%" }}
               label="Code Identifiant"
-              name="code_identifiant"
+              name="id_code"
+              value={data.id_code}
+              onChange={handleValuesChange}
             />
-            <TextArea rows={2} placeholder="Icons" />
-            <TextArea rows={2} placeholder="Icons" />
+            <TextArea
+              rows={2}
+              placeholder="Icons"
+              name="icon"
+              value={data.icon}
+              onChange={handleValuesChange}
+            />
             <TextField
               variant="outlined"
               sx={{ width: "100%" }}
               label="Titre"
-              name="Titre"
+              name="title"
+              value={data.title}
+              onChange={handleValuesChange}
+            />
+            <TextField
+              variant="outlined"
+              sx={{ width: "100%" }}
+              label="Description"
+              name="description"
+              value={data.description}
+              onChange={handleValuesChange}
+            />
+            <TextArea
+              rows={2}
+              placeholder="Files..."
+              name="file"
+              value={data.file}
+              onChange={handleValuesChange}
             />
             <Box sx={{ width: "100%" }}>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Rang</InputLabel>
+                <InputLabel id="demo-simple-select-label">Criteres</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  name="Criteres"
+                  name="item"
+                  value={data.item}
                   // value={newUserData.group.toLocaleLowerCase()}
                   label="Criteres"
-                  // onChange={handleNewUserDataChange}
+                  onChange={handleValuesChange}
                 >
                   {availableRangs.map((rang, index) => (
                     <MenuItem key={index} value={rang}>
@@ -110,19 +168,43 @@ const CreateDataModal = ({ open, handleClose }: CreateDataModalProps) => {
                 </Select>
               </FormControl>
             </Box>
-            <TextField
-              variant="outlined"
-              sx={{ width: "100%" }}
-              label="Description"
-              name="Description"
-            />
-            <TextArea rows={2} placeholder="Choix utilisateru..." />
-            <TextArea rows={2} placeholder="Aide utilisateur..." />
 
-            <TextArea rows={2} placeholder="Commentaire..." />
-            <TextArea rows={2} placeholder="List des document" />
+            <TextArea
+              rows={2}
+              placeholder="Choix utilisateur..."
+              name="condition"
+              value={data.condition}
+              onChange={handleValuesChange}
+            />
+            <TextArea
+              rows={2}
+              placeholder="Aide utilisateur..."
+              name="help"
+              value={data.help.toUpperCase()}
+              onChange={handleValuesChange}
+            />
+
+            <TextArea
+              rows={2}
+              placeholder="Commentaire..."
+              name="comment"
+              value={data.comment}
+              onChange={handleValuesChange}
+            />
+            <TextArea
+              rows={2}
+              placeholder="List des document"
+              name="document"
+              value={data.document}
+              onChange={handleValuesChange}
+            />
           </Box>
-          <Button variant="outlined" sx={{ mt: 3, p: 1.5 }} fullWidth>
+          <Button
+            variant="outlined"
+            sx={{ mt: 3, p: 1.5 }}
+            fullWidth
+            onClick={submitData}
+          >
             + Créer
           </Button>
         </Box>

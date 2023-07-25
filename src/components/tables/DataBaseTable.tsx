@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DataGrid, GridColDef, GridToolbar, frFR } from "@mui/x-data-grid";
+import { Button, Card } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const columns: GridColDef[] = [
   {
     field: "family_code",
     headerName: "code famille",
-    flex: 1,
+    flex: 1.5,
   },
-  { field: "id_code", headerName: "code identifiant", flex: 1 },
+  { field: "id_code", headerName: "code identifiant", flex: 2 },
   { field: "icon", headerName: "Icon", flex: 1 },
   {
     field: "title",
@@ -17,7 +19,7 @@ const columns: GridColDef[] = [
   {
     field: "description",
     headerName: "Description",
-    flex: 1,
+    flex: 2,
   },
   {
     field: "file",
@@ -32,32 +34,32 @@ const columns: GridColDef[] = [
   {
     field: "conditions",
     headerName: "choix utilisateur",
-    flex: 1,
+    flex: 2,
   },
   {
     field: "help",
     headerName: "Aide utilisateur",
-    flex: 1,
+    flex: 2,
   },
   {
     field: "comment",
     headerName: "commentaire",
-    flex: 1,
+    flex: 2,
   },
   {
     field: "documents",
     headerName: "List des documents",
-    flex: 1,
+    flex: 2.5,
   },
   {
     field: "complexity",
     headerName: "Point de complexité",
-    flex: 1,
+    flex: 2.5,
   },
   {
     field: "rights",
     headerName: "Droit utilisateur",
-    flex: 1,
+    flex: 2,
   },
 ];
 
@@ -67,23 +69,11 @@ for (const item of columns) {
 }
 
 const DataBaseTable = () => {
-  // Sample data for demonstration purposes
-  // const initialData = [
-  //   { id: 1, code_fa: "Value 1", B: "Value 2", C: "Value 3" /* ... */ },
-  //   { id: 2, A: "Value 4", B: "Value 5", C: "Value 6" /* ... */ },
-  //   // Add more rows as needed
-  // ];
-
   const [filteredData, setFilteredData] = useState([initial]);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
-  // Define the deleteMultipleSelectedRows function if needed
-  const deleteMultipleSelectedRows = () => {
-    // Implement the logic to delete selected rows here
-  };
-
   return (
-    <div style={{ position: "relative" }}>
+    <Card sx={{ minHeight: 100, overflow: "scroll" }}>
       <DataGrid
         localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
         rows={filteredData}
@@ -98,20 +88,33 @@ const DataBaseTable = () => {
         components={{
           Toolbar: GridToolbar,
         }}
+        autoHeight
         checkboxSelection
         disableRowSelectionOnClick
-        sx={{ overflowX: "auto" }}
-
+        sx={{
+          "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {
+            width: "0.4em",
+          },
+          "& .MuiDataGrid-virtualScroller::-webkit-scrollbar-track": {
+            background: "#f1f1f1",
+          },
+          "& .MuiDataGrid-virtualScroller::-webkit-scrollbar-thumb": {
+            backgroundColor: "#dedede",
+          },
+          "& .MuiDataGrid-virtualScroller::-webkit-scrollbar-thumb:hover": {
+            background: "#dedede",
+          },
+        }}
         // onRowSelectionModelChange={handleSelectionChange}
       />
 
-      {/* {selectedRows?.length > 0 ? (
-        <Button className="deleteButton" onClick={deleteMultipleSelectedRows}>
+      {selectedRows?.length > 0 ? (
+        <Button className="deleteButton">
           <DeleteIcon />
           <span>Supprimer tout les champs selectionné</span>
         </Button>
-      ) : null} */}
-    </div>
+      ) : null}
+    </Card>
   );
 };
 

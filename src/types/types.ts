@@ -2,7 +2,7 @@ export interface linksType {
   id: number;
   path: string;
   text: string;
-  icon: React.ReactNode
+  icon: React.ReactNode;
 }
 
 export interface DataType {
@@ -42,4 +42,20 @@ export interface IUser {
     | "client"
     | "";
   email: string;
+}
+
+export interface DataBaseTypes {
+  family_code: string;
+  id_code: string;
+  icon: string;
+  title: string;
+  description: string;
+  file: string;
+  item: string;
+  condition: string;
+  help: string;
+  comment: string;
+  document: string;
+  complexity: string;
+  right: string;
 }

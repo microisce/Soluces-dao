@@ -49,6 +49,12 @@ export const links: linksType[] = [
     text: "Console administrateur ",
     icon: <AdminPanelSettings />,
   },
+  // {
+  //   id: 7,
+  //   path: "/dashboard/admin-console",
+  //   text: "Famille",
+  //   icon: <AdminPanelSettings />,
+  // },
 ];
 
 export const SideBar = () => {

@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridToolbar,
+  frFR,
+  gridExpandedSortedRowIdsSelector,
+  gridVisibleColumnDefinitionsSelector,
+  useGridApiRef,
+} from "@mui/x-data-grid";
 import useDashboardStore from "../../store/useDataStore";
 import { IUser } from "../../types/types";
 import DeleteButton from "../DeleteRowButton";
@@ -32,7 +40,7 @@ const columns: GridColDef[] = [
 ];
 
 type UsersTableProps = {
-  usersData: IUser[];
+  usersData: IUser[] | undefined;
 };
 
 const UsersTable = ({ usersData }: UsersTableProps) => {
@@ -77,15 +85,19 @@ const UsersTable = ({ usersData }: UsersTableProps) => {
   };
 
   useEffect(() => {
-    const searchedData = usersData.filter(
-      (item) =>
-        item.username === searchedValue ||
-        item.first_name === searchedValue ||
-        item.last_name === searchedValue ||
-        item.email === searchedValue
-    );
+    if (usersData?.length > 0) {
+      const searchedData = usersData?.filter(
+        (item) =>
+          item.username === searchedValue ||
+          item.first_name === searchedValue ||
+          item.last_name === searchedValue ||
+          item.email === searchedValue
+      );
 
-    setFilteredData(searchedValue !== "" ? searchedData : usersData);
+      setFilteredData(searchedValue !== "" ? searchedData : usersData);
+    } else {
+      setFilteredData([]);
+    }
   }, [searchedValue, usersData]);
 
   return (
