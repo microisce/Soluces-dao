@@ -68,9 +68,9 @@ const NeedsTable = ({ data, fetchData }: TableDataProp) => {
     const handleDeleteClick = () => {
       const rowId = params.row.id;
       deleteNeed(rowId)
-        .then((result) => {
-          toast.success("Besoin supprimer");
+        .then(() => {
           fetchData();
+          toast.success("Besoin supprimer");
         })
         .catch((error) => {
           console.log(error);
@@ -101,10 +101,10 @@ const NeedsTable = ({ data, fetchData }: TableDataProp) => {
       console.log(row);
       deleteNeed(row)
         .then(() => {
+          fetchData();
           toast.success("Besoins supprimés avec succés", {
             toastId: "1",
           });
-          fetchData();
         })
         .catch((err) => {
           console.log(err);
@@ -153,6 +153,7 @@ const NeedsTable = ({ data, fetchData }: TableDataProp) => {
         components={{
           Toolbar: GridToolbar,
         }}
+        autoHeight
         checkboxSelection
         disableRowSelectionOnClick
         onRowSelectionModelChange={handleSelectionChange}

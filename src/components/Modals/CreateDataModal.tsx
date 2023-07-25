@@ -9,58 +9,61 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import TextareaAutosize from "@mui/material/TextareaAutosize";
-import TextArea from "antd/es/input/TextArea";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { DataBaseTypes } from "../../types/types";
-import { useState } from "react";
-
-const style = {
-  position: "absolute" as const,
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 600,
-  height: "90%",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  borderRadius: 5,
-  p: 4,
-  // margin: 4,
-  overflow: "auto",
-};
+import { useEffect, useState } from "react";
+import { getTypesList } from "../../api/Loaders";
+import { StyledTextarea, style } from "./styles";
 
 type CreateDataModalProps = {
   open: boolean;
   handleClose: () => void;
 };
 
-const CreateDataModal = ({ open, handleClose }: CreateDataModalProps) => {
-  const [data, setData] = useState<DataBaseTypes>({
-    family_code: "",
-    id_code: "",
-    icon: "",
-    title: "",
-    description: "",
-    file: "",
-    item: "",
-    condition: "",
-    help: "",
-    comment: "",
-    document: "",
-    complexity: "",
-    right: "",
-  });
+const initialValues = {
+  family_code: "",
+  id_code: "",
+  icon: "",
+  title: "",
+  description: "",
+  file: "",
+  item: "",
+  condition: "",
+  help: "",
+  comment: "",
+  help_documents: "",
+  complexity_point: "",
+  rights: "",
+};
 
-  const availableRangs = [
-    "administrateur",
-    "externe",
-    "moderateur",
-    "interne",
-    "gestion",
-    "formation",
-    "client",
-  ];
+const ComplexityPoints: string[] = ["simple", "moyen", "complexe", "hors bord"];
+
+const availableRights: string[] = [
+  "administrateur",
+  "externe",
+  "moderateur",
+  "interne",
+  "gestion",
+  "formation",
+  "client",
+];
+
+const CreateDataModal = ({ open, handleClose }: CreateDataModalProps) => {
+  const [data, setData] = useState<DataBaseTypes>(initialValues);
+  const [types, setTypes] = useState<string[]>([]);
+  const [selectedList, setSelectedList] = useState<string[]>([]);
+
+  const fetchTypes = () => {
+    getTypesList()
+      .then((data) => {
+        setTypes(data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    fetchTypes();
+  }, []);
 
   const handleValuesChange = (e: {
     target: { name: string; value: string };
@@ -71,9 +74,29 @@ const CreateDataModal = ({ open, handleClose }: CreateDataModalProps) => {
     }));
   };
 
+  const handleRightsChange = (event: SelectChangeEvent<typeof data.rights>) => {
+    const {
+      target: { value },
+    } = event;
+
+    setSelectedList(typeof value === "string" ? value.split(",") : value);
+  };
+
   const submitData = () => {
     console.log(data);
+    setData(initialValues);
   };
+
+  useEffect(() => {
+    if (selectedList.length > 0) {
+      setData((prevData) => ({
+        ...prevData,
+        rights: selectedList.join(";"),
+      }));
+    }
+
+    console.log(data.rights);
+  }, [selectedList, data.rights]);
 
   return (
     <div>
@@ -118,13 +141,15 @@ const CreateDataModal = ({ open, handleClose }: CreateDataModalProps) => {
               value={data.id_code}
               onChange={handleValuesChange}
             />
-            <TextArea
-              rows={2}
-              placeholder="Icons"
+            <TextField
+              variant="outlined"
+              sx={{ width: "100%" }}
+              label="Icon"
               name="icon"
               value={data.icon}
               onChange={handleValuesChange}
             />
+
             <TextField
               variant="outlined"
               sx={{ width: "100%" }}
@@ -136,68 +161,122 @@ const CreateDataModal = ({ open, handleClose }: CreateDataModalProps) => {
             <TextField
               variant="outlined"
               sx={{ width: "100%" }}
-              label="Description"
+              label="Déscription"
               name="description"
               value={data.description}
               onChange={handleValuesChange}
             />
-            <TextArea
-              rows={2}
-              placeholder="Files..."
+
+            <StyledTextarea
+              aria-label="minimum height"
+              minRows={3}
+              placeholder="Fichiers..."
               name="file"
               value={data.file}
               onChange={handleValuesChange}
             />
             <Box sx={{ width: "100%" }}>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Criteres</InputLabel>
+                <InputLabel id="demo-simple-select-label">
+                  Liste de critères
+                </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   name="item"
                   value={data.item}
-                  // value={newUserData.group.toLocaleLowerCase()}
-                  label="Criteres"
+                  label="Liste de critères"
                   onChange={handleValuesChange}
                 >
-                  {availableRangs.map((rang, index) => (
-                    <MenuItem key={index} value={rang}>
-                      {rang.toUpperCase()}
+                  {types.map((type) => (
+                    <MenuItem key={type} value={type}>
+                      {type.toUpperCase()}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Box>
 
-            <TextArea
-              rows={2}
-              placeholder="Choix utilisateur..."
+            <StyledTextarea
+              aria-label="minimum height"
+              minRows={3}
+              placeholder="Condition..."
               name="condition"
               value={data.condition}
               onChange={handleValuesChange}
             />
-            <TextArea
-              rows={2}
+
+            <StyledTextarea
+              aria-label="minimum height"
+              minRows={3}
               placeholder="Aide utilisateur..."
               name="help"
-              value={data.help.toUpperCase()}
+              value={data.help}
               onChange={handleValuesChange}
             />
 
-            <TextArea
-              rows={2}
+            <StyledTextarea
+              aria-label="minimum height"
+              minRows={3}
               placeholder="Commentaire..."
               name="comment"
               value={data.comment}
               onChange={handleValuesChange}
             />
-            <TextArea
-              rows={2}
-              placeholder="List des document"
-              name="document"
-              value={data.document}
+
+            <StyledTextarea
+              aria-label="minimum height"
+              minRows={3}
+              placeholder="Documents utils"
+              name="help_documents"
+              value={data.help_documents}
               onChange={handleValuesChange}
             />
+
+            <Box sx={{ width: "100%" }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Point de complexité
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name="complexity_point"
+                  value={data.complexity_point}
+                  label="Point de complexité"
+                  onChange={handleValuesChange}
+                >
+                  {ComplexityPoints.map((point, index) => (
+                    <MenuItem key={index} value={point}>
+                      {point.toLocaleUpperCase()}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <Box sx={{ width: "100%" }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Droit d'utilisateur
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  multiple
+                  name="complexity_point"
+                  value={selectedList}
+                  label="Droit d'utilisateur"
+                  onChange={handleRightsChange}
+                >
+                  {availableRights.map((right) => (
+                    <MenuItem key={right} value={right}>
+                      {right.toLocaleUpperCase()}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
           </Box>
           <Button
             variant="outlined"

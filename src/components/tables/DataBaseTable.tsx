@@ -22,12 +22,12 @@ const columns: GridColDef[] = [
     flex: 2,
   },
   {
-    field: "file",
+    field: "attachment",
     headerName: "File",
     flex: 1,
   },
   {
-    field: "items",
+    field: "items_type",
     headerName: "Critéres",
     flex: 1,
   },
@@ -37,7 +37,7 @@ const columns: GridColDef[] = [
     flex: 2,
   },
   {
-    field: "help",
+    field: "user_help",
     headerName: "Aide utilisateur",
     flex: 2,
   },
@@ -47,7 +47,7 @@ const columns: GridColDef[] = [
     flex: 2,
   },
   {
-    field: "documents",
+    field: "help_documents",
     headerName: "List des documents",
     flex: 2.5,
   },
@@ -57,7 +57,7 @@ const columns: GridColDef[] = [
     flex: 2.5,
   },
   {
-    field: "rights",
+    field: "user_right",
     headerName: "Droit utilisateur",
     flex: 2,
   },

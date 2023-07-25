@@ -1,30 +1,30 @@
-import { Box, Button, ButtonGroup, Grid, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  ButtonGroup,
+  Checkbox,
+  Container,
+  FormControl,
+  Grid,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
+  Stack,
+} from "@mui/material";
 // import React from "react";
-import EditNoteIcon from "@mui/icons-material/EditNote";
 import "./Create.css";
-import { styles } from "./styles";
 import FileUploaderBox from "../../../components/FileUploaderBox";
 import TextArea from "antd/es/input/TextArea";
-import { useSearchParams } from "react-router-dom";
-import React from "react";
+import React, { useState } from "react";
 import { useBesoinState } from "../../../store/besoin_store";
 import moment from "moment";
+import Typography from "@mui/material/Typography";
 
 // type Props = {};
-
-const data = [
-  "Item 1",
-  "Item 2",
-  "Item 3",
-  "Item 4",
-  "Item 5",
-  "Item 6",
-  "Item 7",
-  "Item 8",
-  "Item 9",
-  "Item 10",
-];
-
 export const InputForm = () => {
   return (
     <Stack>
@@ -42,91 +42,139 @@ export const InputForm = () => {
           width: "100%",
           mt: 2,
         }}
-      >
-        <Box sx={{ width: "100%" }}>
-          <Typography sx={{ mt: 2 }}>Document utils</Typography>
-          <TextArea rows={2} style={{ marginTop: 2 }} />
-        </Box>
-        <Box sx={{ width: "100%" }}>
-          <Typography sx={{ mt: 2 }}>Glisser/déposer Document</Typography>
-          <TextArea rows={3} style={{ marginTop: 2 }} />
-        </Box>
-      </Box>
+      ></Box>
     </Stack>
   );
 };
 
+const Items: string[] = [
+  "APD",
+  "BAIL",
+  "CARTE AMERS",
+  "DTI",
+  "DP",
+  "GESTION",
+  "SYNOPTIQUE",
+];
+
+const steps: string[] = [
+  "AP1",
+  "AP2",
+  "AP3",
+  "AP4",
+  "AP5",
+  "AP6",
+  "AP7",
+  "AP8",
+  "AP9",
+  "AP10",
+];
+
 const Details = () => {
   const queryParameters = new URLSearchParams(window.location.search);
-  const besoinId = queryParameters.get("id");
-
-  const {active_besoin, step_list, active_step} = useBesoinState()
-
+  const { active_besoin, step_list, active_step } = useBesoinState();
 
   const [rightActiveButtonId, setRightActiveButtonId] =
     React.useState<number>();
-  const [leftActiveButtonId, setLeftActiveButtonId] = React.useState<number>();
 
+  const [itemsList, setItemsList] = useState<string[]>([]);
 
+  // const [leftActiveButtonId, setLeftActiveButtonId] = React.useState<number>();
 
+  const handleChange = (event: SelectChangeEvent<typeof itemsList>) => {
+    const {
+      target: { value },
+    } = event;
+    setItemsList(typeof value === "string" ? value.split(",") : value);
+  };
 
-
+  function handleClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    event.preventDefault();
+    console.info("You clicked a breadcrumb.");
+  }
 
   return (
-    <Grid container>
-      <Grid xs={12} container height={'80px'}>
-        <Grid xs={3} flexDirection={'column'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+    <Grid container sx={{ position: "relative" }}>
+      <Grid xs={12}>
+        <Container
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <Breadcrumbs
+            aria-label="breadcrumb"
+            sx={{
+              alignItems: "center",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            {steps.map((step, index) => (
+              <Typography
+                variant="button"
+                key={index}
+                sx={{ cursor: "pointer" }}
+              >
+                {step}
+              </Typography>
+            ))}
+          </Breadcrumbs>
+        </Container>
+      </Grid>
 
-          <Typography variant='body2'>
-            Numero d'identification
-          </Typography>
+      <Grid xs={12} container height={"80px"}>
+        <Grid
+          xs={3}
+          flexDirection={"column"}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <Typography variant="body2">Numero d'identification</Typography>
+          <Typography>{active_besoin?.id ?? "1"}</Typography>
+        </Grid>
+        <Grid
+          xs={6}
+          flexDirection={"column"}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <Typography variant="body2">Designation</Typography>
+          <Typography>{active_besoin?.designation ?? "EB12"}</Typography>
+        </Grid>
+        <Grid
+          xs={3}
+          flexDirection={"column"}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <Typography variant="body2">Derniere modification</Typography>
           <Typography>
-            {active_besoin?.id?? "1"}
+            {moment(active_besoin?.update_at ?? new Date()).calendar()}
           </Typography>
-
-        </Grid>
-        <Grid xs={6} flexDirection={'column'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
-
-          <Typography variant='body2'>
-              Designation
-            </Typography>
-            <Typography>
-              {active_besoin?.designation?? "EB12"}
-            </Typography>
-        </Grid>
-        <Grid xs={3} flexDirection={'column'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
-
-            <Typography variant='body2'>
-              Derniere modification
-            </Typography>
-            <Typography>
-              {moment(active_besoin?.update_at?? new Date).calendar()}
-            </Typography>
         </Grid>
       </Grid>
       <Grid xs={3}>
-        <Typography width={'100%'} variant='body2' textAlign={'center'}>
-              Liste d'etape
-          </Typography>
-        <ButtonGroup
-          orientation="vertical"
-          sx={{ overflow: "auto", height: "100%", width: "100%" }}
-        >
-          {data.slice(4).map((value, index) => (
-            <Button
-              onClick={() => setRightActiveButtonId(index)}
-              key={index}
-              variant={rightActiveButtonId == index ? "contained" : "outlined"}
-            >
-              AP {index+1}
-            </Button>
-          ))}
-        </ButtonGroup>
+        <Stack>
+          <Box sx={{ width: "100%" }}>
+            <Typography sx={{ mt: -0.5 }}>Document utils</Typography>
+            <TextArea rows={2} style={{ marginTop: 2 }} />
+          </Box>
+          <Box sx={{ width: "100%" }}>
+            <Typography sx={{ mt: 2 }}>Glisser/déposer Document</Typography>
+            <TextArea rows={3} style={{ marginTop: 2 }} />
+          </Box>
+        </Stack>
       </Grid>
       <Grid xs={6}>
-          <Typography width={'100%'} variant='body2' textAlign={'center'}>
-              Description
-          </Typography>
+        <Typography width={"100%"} variant="body2" textAlign={"center"}>
+          Description
+        </Typography>
         <Box sx={{ px: 2 }}>
           <FileUploaderBox />
           <InputForm />
@@ -150,19 +198,22 @@ const Details = () => {
             >
               Precedent
             </Button>
-            <Box onClick={()=>{console.log('later')}}>
-            <Typography
-              
-              sx={{
-                color: "#0a76cf",
-                cursor: 'pointer',
-                textDecorationLine: 'underline'
+            <Box
+              onClick={() => {
+                console.log("later");
               }}
             >
-              terminer plus tard
-            </Typography>
+              <Typography
+                sx={{
+                  color: "#0a76cf",
+                  cursor: "pointer",
+                  textDecorationLine: "underline",
+                }}
+              >
+                terminer plus tard
+              </Typography>
             </Box>
-            
+
             <Box>
               <Button
                 variant="outlined"
@@ -173,7 +224,7 @@ const Details = () => {
                   marginRight: 10,
                 }}
               >
-                NOK
+                NO
               </Button>
               <Button
                 variant="outlined"
@@ -190,192 +241,55 @@ const Details = () => {
         </Box>
       </Grid>
       <Grid xs={3}>
-        <Typography width={'100%'} variant='body2' textAlign={'center'}>
-              Liste de criteres
-          </Typography>
-        <ButtonGroup
-          orientation="vertical"
-          sx={{ overflow: "auto", width: "100%" }}
-        >
-          {data.slice(0,6).map((value, index) => (
-            <Button
-              sx={{textAlign: 'left'}}
-
-              key={index}
-              onClick={() => setLeftActiveButtonId(index)}
-              variant={leftActiveButtonId == index ? "contained" : "outlined"}
+        <FormControl sx={{ width: "100%", mt: 2.5 }}>
+          <InputLabel id="demo-multiple-checkbox-label">
+            Liste de critères
+          </InputLabel>
+          <Select
+            labelId="demo-multiple-checkbox-label"
+            id="demo-multiple-checkbox"
+            multiple
+            value={itemsList}
+            onChange={handleChange}
+            input={<OutlinedInput label="Liste de critères" />}
+            renderValue={(selected) => selected.join(", ")}
+          >
+            {Items.map((item) => (
+              <MenuItem key={item} value={item}>
+                <Checkbox checked={itemsList.indexOf(item) > -1} />
+                <ListItemText primary={item} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Box sx={{ mt: 5, mb: 3 }}>
+          <Typography>Choix utilisateur</Typography>
+          <Box
+            sx={{
+              border: "1px solid #dedede",
+              width: "100%",
+              height: 500,
+              p: 2,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+              }}
             >
-              CONDITION {index +1}
-            </Button>
-          ))}
-        </ButtonGroup>
-        <Typography width={'100%'} variant='body2' textAlign={'center'} pt={2}>
-              Choix utilisateur
-          </Typography>
-        <ButtonGroup
-          orientation="vertical"
-          sx={{ overflow: "auto",  width: "100%" }}
-        >
-          {data.slice(0,3).map((value, index) => (
-            <Button
-              key={index}
-              //onClick={() => setLeftActiveButtonId(index)}
-              //variant={leftActiveButtonId == index ? "contained" : "outlined"}
-            >
-              CHOIX {index+1}
-            </Button>
-          ))}
-        </ButtonGroup>
+              <Stack>
+                {itemsList.map((item, index) => (
+                  <Typography key={index}>{item}</Typography>
+                ))}
+              </Stack>
+            </Box>
+          </Box>
+        </Box>
       </Grid>
     </Grid>
   );
 };
 
 export default Details;
-
-/*
-  return (
-    <Box
-      sx={{
-        position: "relative",
-        width: "80%",
-        // marginTop: 30,
-        height: "100%",
-        borderLeft: "1px solid #000",
-        top: 0,
-      }}
-    >
-      <div className="headerSection">
-        <Box>
-          <Typography>Numéro EB</Typography>
-          <Typography variant="h5">Code identification</Typography>
-        </Box>
-        <Box>
-          <Typography>Désigantion EB</Typography>
-          <Typography variant="h5">Titre</Typography>
-        </Box>
-        <Box>
-          {" "}
-          <Typography>Code identification</Typography>
-          <EditNoteIcon sx={{ width: 50, height: 50 }} />
-        </Box>
-      </div>
-      <div className="formContainer">
-        <Box sx={styles.scrollBoxes}>
-          <Box
-            sx={{
-              display: "flex",
-              "& > *": {
-                m: 1,
-              },
-              border: "1px solid #dedede",
-            }}
-          >
-            <ButtonGroup
-              orientation="vertical"
-              aria-label="vertical outlined button group"
-            >
-              {data.map((value, index) => (
-                <Button
-                  key={index}
-                  variant={index == 0 ? "contained" : "outlined"}
-                >
-                  {value}
-                </Button>
-              ))}
-            </ButtonGroup>
-          </Box>
-          {/* <List
-            size="large"
-            bordered
-            dataSource={data}
-            renderItem={(item) => (
-              <List.Item>
-                <Button type="text" style={{ color: "#0a76cf" }}>
-                  {item}
-                </Button>
-              </List.Item>
-            )}
-            style={{ height: "100%", width: 250, overflow: "scroll" }}
-          /> 
-          <Box sx={styles.FileBox}>
-            <FileUploaderBox />
-            <InputForm />
-          </Box>
-          <Box>
-            <List
-              size="small"
-              bordered
-              dataSource={data}
-              renderItem={(item) => (
-                <List.Item>
-                  <Button variant="text" style={{ color: "#0a76cf" }}>
-                    {item}
-                  </Button>
-                </List.Item>
-              )}
-              style={{
-                height: 300,
-                width: 250,
-                overflow: "scroll",
-              }}
-            />
-            <List
-              size="small"
-              bordered
-              dataSource={data}
-              renderItem={(item) => (
-                <List.Item>
-                  <Button variant="text" style={{ color: "#0a76cf" }}>
-                    {item}
-                  </Button>
-                </List.Item>
-              )}
-              style={{
-                height: 300,
-                width: 250,
-                overflow: "scroll",
-                marginTop: 15,
-              }}
-            />
-          </Box>
-        </Box>
-      </div>
-       <div className="buttons-container">
-        <Button
-          type="default"
-          style={{
-            border: "1px solid #0a76cf",
-            color: "#0a76cf",
-            backgroundColor: "transparent",
-            borderRadius: 5,
-          }}
-        >
-          Precedent
-        </Button>
-        <div>
-          <Button
-            type="default"
-            style={{
-              color: "#fff",
-              backgroundColor: "red",
-              borderRadius: 5,
-              marginRight: 10,
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="default"
-            style={{
-              color: "#fff",
-              backgroundColor: "green",
-              borderRadius: 5,
-            }}
-          >
-            Ok
-          </Button>
-        </div>
-      </div> 
-    </Box>
-  );*/

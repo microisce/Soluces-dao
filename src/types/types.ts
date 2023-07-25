@@ -55,7 +55,7 @@ export interface DataBaseTypes {
   condition: string;
   help: string;
   comment: string;
-  document: string;
-  complexity: string;
-  right: string;
+  help_documents: string;
+  rights: string;
+  complexity_point: string;
 }

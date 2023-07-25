@@ -106,3 +106,14 @@ export const deleteUser = async (userId: number) => {
     console.error(error);
   }
 };
+
+export const getTypesList = async () => {
+  try {
+    const response = await http.get(`/item-type/list/`);
+    if (response && response.status == 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
