@@ -1,7 +1,7 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { userLogin } from "../../api/Loaders";
+import { requestOTP, userLogin } from "../../api/Loaders";
 import useDashboardStore from "../../store/useDataStore";
 import Loading from "../../components/spinner/Loading";
 import { useAuthState } from "../../store/auth_store";
@@ -41,20 +41,50 @@ function Login() {
 
   const [disabled, setDisabled] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [emailChanged, setEmailChanged] = React.useState(false)
   const {is_authenticated} = useAuthState()
+
+
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (formData.email === "" || formData.password === "") {
-      setDisabled(true);
-    } else {
-      setDisabled(false);
+    if (formData.email.length === 0){
+      setEmailChanged(false)
+    } 
+    if (formData.password === ""){
+      setDisabled(true)
+    } 
+    if (formData.email.length > 0) {
+      setEmailChanged(true)
+    } 
+    if (formData.password.length > 0){
+      setDisabled(false)
+      setEmailChanged(false)
     }
-  }, [formData]);
+    // if (formData.email === "" || formData.password === "") {
+    //   setDisabled(true);
+    //   if (formData.email.length === 0){
+    //     setEmailChanged(false)
+    //   }
+    // }
+    // else {
+    //   setDisabled(false);
+    // }
+  }, [formData, formData.email.length, formData.password.length]);
 
   const handleLogin = () => {
     setIsLoading(true);
-    userLogin(formData)
+    userLogin({email: formData.email, otp: formData.password})
+      .catch((err) => {
+        console.log(err);
+    }).finally(()=>{
+      setIsLoading(false);
+    })
+  };
+
+  const sendOTP = () => {
+    setIsLoading(true);
+    requestOTP(formData.email)
       .catch((err) => {
         console.log(err);
     }).finally(()=>{
@@ -85,12 +115,13 @@ function Login() {
           label="Identifiant"
           variant="outlined"
           value={formData.email}
-          onChange={(e) =>
+          onChange={(e) =>{
             setFormData((prevData) => ({
               ...prevData,
               email: e.target.value,
             }))
           }
+        }
         />
         <TextField
           sx={{
@@ -103,20 +134,23 @@ function Login() {
           label="Mot de passe"
           variant="outlined"
           value={formData.password}
-          onChange={(e) =>
+          onChange={(e) =>{
+            
             setFormData((prevData) => ({
               ...prevData,
               password: e.target.value,
             }))
-          }
+          }}
         />
 
         <Grid container mt={2}>
-          <Grid item xs>
-            <Button variant="text" sx={{ outline: "none" }}>
-              <Link to={"/password-restoration"} style={{ color: "#0096FF" }}>
-                Mot de passe oublié ?
-              </Link>
+          <Grid item xs={5}>
+            <Button
+              disabled={!emailChanged}
+              variant="contained"
+              onClick={sendOTP}
+            >
+              Demander OTP
             </Button>
           </Grid>
 
@@ -124,7 +158,7 @@ function Login() {
             <Typography></Typography>
           </Grid>
 
-          <Grid item>
+          <Grid item xs={5}>
             <Button
               disabled={disabled}
               variant="contained"

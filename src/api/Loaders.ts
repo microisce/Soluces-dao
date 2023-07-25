@@ -3,12 +3,32 @@ import { http, no_auth_http } from "./ApiManager";
 import { NewUserType } from "../types/types";
 import { vanillaAuthState } from "../store/auth_store";
 
+
+export const requestOTP = async (email: string): Promise<boolean> => {
+  const data = { email }
+  try {
+    const response = await no_auth_http("request_otp/", { method: "post", data });
+    if (response && response.status == 200) {
+      console.log(response.data);
+      toast.success("Veuillez verifier votre boite email");
+      //vanillaAuthState.getState().set_tokens(response.data);
+      return Promise.resolve(true);
+    }
+    toast.error("Email invalide ou compte inexistant");
+    return Promise.resolve(false);
+  } catch (error) {
+    console.log(error);
+    toast.error("Email invalide ou compte inexistant");
+    return Promise.resolve(false);
+  }
+};
+
 export const userLogin = async (data: {
   email: string;
-  password: string;
+  otp: string;
 }): Promise<boolean> => {
   try {
-    const response = await no_auth_http("login/", { method: "post", data });
+    const response = await no_auth_http("login_v2/", { method: "post", data });
     if (response && response.status == 200) {
       console.log(response.data);
       //toast.success("Bonjour");

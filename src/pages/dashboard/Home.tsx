@@ -84,7 +84,7 @@ function Home() {
   useEffect(() => {
     if (!is_authenticated) {
       navigate("/");
-      toast.warning("You need to login first", { toastId: "1" });
+      toast.warning("Deconnecté", { toastId: "1" });
     }
   }, [navigate, is_authenticated]);
 
