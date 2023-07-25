@@ -1,13 +1,15 @@
 import { toast } from "react-toastify";
 import { http, no_auth_http } from "./ApiManager";
-import { NewUserType } from "../types/types";
+import { DataBaseTypes, NewUserType } from "../types/types";
 import { vanillaAuthState } from "../store/auth_store";
 
-
 export const requestOTP = async (email: string): Promise<boolean> => {
-  const data = { email }
+  const data = { email };
   try {
-    const response = await no_auth_http("request_otp/", { method: "post", data });
+    const response = await no_auth_http("request_otp/", {
+      method: "post",
+      data,
+    });
     if (response && response.status == 200) {
       console.log(response.data);
       toast.success("Veuillez verifier votre boite email");
@@ -130,6 +132,32 @@ export const deleteUser = async (userId: number) => {
 export const getTypesList = async () => {
   try {
     const response = await http.get(`/item-type/list/`);
+    if (response && response.status == 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const createDataForDB = async (data: DataBaseTypes) => {
+  const input_data = {
+    ...data,
+  };
+  try {
+    const response = await http.post(`/step/list/`, input_data);
+    if (response && response.status == 200) {
+      toast.success("Données créées avec succès");
+      return response.data;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchDataForDB = async () => {
+  try {
+    const response = await http.get(`/step/list/`);
     if (response && response.status == 200) {
       return response.data;
     }

@@ -2,6 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { DataGrid, GridColDef, GridToolbar, frFR } from "@mui/x-data-grid";
 import { Button, Card } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { DataBaseTypes } from "../../types/types";
+import { fetchDataForDB } from "../../api/Loaders";
+
+type DataBaseViewProps = {
+  tableData: DataBaseTypes[];
+};
 
 const columns: GridColDef[] = [
   {
@@ -63,14 +69,25 @@ const columns: GridColDef[] = [
   },
 ];
 
-const initial = {} as any;
-for (const item of columns) {
-  initial[item.field] = item.headerName;
-}
+// const initial = {} as any;
+// for (const item of columns) {
+//   initial[item.field] = item.headerName;
+// }
 
-const DataBaseTable = () => {
-  const [filteredData, setFilteredData] = useState([initial]);
+const DataBaseTable = ({ tableData }: DataBaseViewProps) => {
+  const [filteredData, setFilteredData] = useState(tableData);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+
+  function fetchDataDB() {
+    fetchDataForDB().then((response) => {
+      setFilteredData(response);
+    });
+  }
+
+  useEffect(() => {
+    fetchDataDB();
+    console.log(tableData);
+  }, [tableData]);
 
   return (
     <Card sx={{ minHeight: 100, overflow: "scroll" }}>

@@ -18,6 +18,7 @@ import { StyledTextarea, style } from "./styles";
 type CreateDataModalProps = {
   open: boolean;
   handleClose: () => void;
+  createData: (data: DataBaseTypes) => void;
 };
 
 const initialValues = {
@@ -37,6 +38,11 @@ const initialValues = {
 };
 
 const ComplexityPoints: string[] = ["simple", "moyen", "complexe", "hors bord"];
+const COMPLEXITY_MAPPING = {} as any;
+
+for (let i = 0; i < ComplexityPoints.length; i++) {
+  COMPLEXITY_MAPPING[ComplexityPoints[i]] = i + 1;
+}
 
 const availableRights: string[] = [
   "administrateur",
@@ -48,7 +54,11 @@ const availableRights: string[] = [
   "client",
 ];
 
-const CreateDataModal = ({ open, handleClose }: CreateDataModalProps) => {
+const CreateDataModal = ({
+  open,
+  handleClose,
+  createData,
+}: CreateDataModalProps) => {
   const [data, setData] = useState<DataBaseTypes>(initialValues);
   const [types, setTypes] = useState<string[]>([]);
   const [selectedList, setSelectedList] = useState<string[]>([]);
@@ -83,7 +93,12 @@ const CreateDataModal = ({ open, handleClose }: CreateDataModalProps) => {
   };
 
   const submitData = () => {
-    console.log(data);
+    const copied_data = {
+      ...data,
+    };
+    copied_data["complexity_point"] =
+      COMPLEXITY_MAPPING[data.complexity_point.toLowerCase()];
+    createData(copied_data);
     setData(initialValues);
   };
 
