@@ -54,8 +54,8 @@ export interface DataBaseTypes {
   item: string;
   condition: string;
   help: string;
-  comment: string;
+  comment?: string;
   help_documents: string;
-  rights: string;
-  complexity_point: string;
+  user_right: string;
+  complexity_point?: string;
 }

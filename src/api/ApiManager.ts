@@ -5,8 +5,9 @@ export type KeyValue = { [key: string]: string | number };
 
 const instance = axios.create({
   // baseURL: "http://192.168.100.15:8000/api/",
-  baseURL: "https://erp-demo-v1.ismaeland.com/api/",
-  timeout: 4000,
+  baseURL: "http://localhost:8000/api/",
+  //baseURL: "https://erp-demo-v1.ismaeland.com/api/",
+  //timeout: 4000,
   withCredentials: false,
   headers: {
     Accept: "application/json",
@@ -15,8 +16,9 @@ const instance = axios.create({
 
 const no_auth_http = axios.create({
   // baseURL: "http://192.168.100.15:8000/api/",
-  baseURL: "https://erp-demo-v1.ismaeland.com/api/",
-  timeout: 4000,
+  //baseURL: "https://erp-demo-v1.ismaeland.com/api/",
+  baseURL: "http://localhost:8000/api/",
+  timeout: 20000,
   withCredentials: false,
   headers: {
     Accept: "application/json",

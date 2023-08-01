@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Button,
   InputLabel,
@@ -12,7 +13,7 @@ import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { DataBaseTypes } from "../../types/types";
 import { useEffect, useState } from "react";
-import { getTypesList } from "../../api/Loaders";
+import { getFamilyCodeChoices, getTypesList } from "../../api/Loaders";
 import { StyledTextarea, style } from "./styles";
 
 type CreateDataModalProps = {
@@ -31,18 +32,13 @@ const initialValues = {
   item: "",
   condition: "",
   help: "",
-  comment: "",
+ // comment: "",
   help_documents: "",
-  complexity_point: "",
-  rights: "",
+  //complexity_point: "",
+  user_right: "",
 };
 
-const ComplexityPoints: string[] = ["simple", "moyen", "complexe", "hors bord"];
-const COMPLEXITY_MAPPING = {} as any;
 
-for (let i = 0; i < ComplexityPoints.length; i++) {
-  COMPLEXITY_MAPPING[ComplexityPoints[i]] = i + 1;
-}
 
 const availableRights: string[] = [
   "administrateur",
@@ -62,6 +58,7 @@ const CreateDataModal = ({
   const [data, setData] = useState<DataBaseTypes>(initialValues);
   const [types, setTypes] = useState<string[]>([]);
   const [selectedList, setSelectedList] = useState<string[]>([]);
+  const [familyCodeChoices, setFamilyCodeChoices] = useState<string[]>([])
 
   const fetchTypes = () => {
     getTypesList()
@@ -73,18 +70,20 @@ const CreateDataModal = ({
 
   useEffect(() => {
     fetchTypes();
-  }, []);
+    getFamilyCodeChoices().then(v=>setFamilyCodeChoices(v))
+  }, [open]);
 
   const handleValuesChange = (e: {
     target: { name: string; value: string };
   }) => {
+    console.log(e)
     setData((prevData) => ({
       ...prevData,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const handleRightsChange = (event: SelectChangeEvent<typeof data.rights>) => {
+  const handleRightsChange = (event: SelectChangeEvent<string>) => {
     const {
       target: { value },
     } = event;
@@ -96,8 +95,7 @@ const CreateDataModal = ({
     const copied_data = {
       ...data,
     };
-    copied_data["complexity_point"] =
-      COMPLEXITY_MAPPING[data.complexity_point.toLowerCase()];
+    console.log(copied_data)
     createData(copied_data);
     setData(initialValues);
   };
@@ -106,12 +104,11 @@ const CreateDataModal = ({
     if (selectedList.length > 0) {
       setData((prevData) => ({
         ...prevData,
-        rights: selectedList.join(";"),
+        user_right: selectedList.join(";"),
       }));
     }
 
-    console.log(data.rights);
-  }, [selectedList, data.rights]);
+  }, [selectedList]);
 
   return (
     <div>
@@ -140,13 +137,16 @@ const CreateDataModal = ({
               marginTop: 3,
             }}
           >
-            <TextField
-              variant="outlined"
+            <Autocomplete
+              
               sx={{ width: "100%" }}
-              label="Code famille"
-              name="family_code"
+              freeSolo
+              onSelect={(e)=>console.log(e)}
+              options={familyCodeChoices}
+              onChange={(e, v) => v ? handleValuesChange({target:{name: "family_code", value: v }}): null}
+              onInputChange={(e, v) => v ? handleValuesChange({target:{name: "family_code", value: v }}): null}
               value={data.family_code}
-              onChange={handleValuesChange}
+              renderInput={(params) => <TextField {...params} onChange={handleValuesChange} autoCapitalize="all" variant="outlined" name="family_code" label="Code famille" />}
             />
             <TextField
               variant="outlined"
@@ -154,6 +154,7 @@ const CreateDataModal = ({
               label="Code Identifiant"
               name="id_code"
               value={data.id_code}
+            
               onChange={handleValuesChange}
             />
             <TextField
@@ -233,42 +234,11 @@ const CreateDataModal = ({
             <StyledTextarea
               aria-label="minimum height"
               minRows={3}
-              placeholder="Commentaire..."
-              name="comment"
-              value={data.comment}
-              onChange={handleValuesChange}
-            />
-
-            <StyledTextarea
-              aria-label="minimum height"
-              minRows={3}
               placeholder="Documents utils"
               name="help_documents"
               value={data.help_documents}
               onChange={handleValuesChange}
             />
-
-            <Box sx={{ width: "100%" }}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Point de complexité
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  name="complexity_point"
-                  value={data.complexity_point}
-                  label="Point de complexité"
-                  onChange={handleValuesChange}
-                >
-                  {ComplexityPoints.map((point, index) => (
-                    <MenuItem key={index} value={point}>
-                      {point.toLocaleUpperCase()}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
 
             <Box sx={{ width: "100%" }}>
               <FormControl fullWidth>

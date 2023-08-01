@@ -148,7 +148,7 @@ export const createDataForDB = async (data: DataBaseTypes) => {
     const response = await http.post(`/step/list/`, input_data);
     if (response && response.status == 200) {
       toast.success("Données créées avec succès");
-      return response.data;
+      return response.data.result;
     }
   } catch (error) {
     console.log(error);
@@ -163,5 +163,20 @@ export const fetchDataForDB = async () => {
     }
   } catch (error) {
     console.log(error);
+  }
+};
+
+
+export const getFamilyCodeChoices = async () => {
+  try {
+    const response = await http.get(`/step/family_codes/`);
+    if (response && response.status == 200) {
+      const list: string[] = response.data.map((item: { family_code: string; })=>item.family_code) ?? []
+      return Array.from(new Set(list));
+    }
+    return []
+  } catch (error) {
+    console.log(error);
+    return []
   }
 };

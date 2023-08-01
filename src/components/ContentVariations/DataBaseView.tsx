@@ -24,6 +24,8 @@ const DataBaseView = () => {
       .catch((err) => console.log(err));
   }
 
+  console.log(tableData)
+
   return (
     <Box sx={ContentStyle.container}>
       <CreateDataModal {...{ open, handleClose, createData }} />

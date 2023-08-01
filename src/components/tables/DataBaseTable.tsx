@@ -13,60 +13,64 @@ const columns: GridColDef[] = [
   {
     field: "family_code",
     headerName: "code famille",
-    flex: 1.5,
+    // flex: 1.5,
   },
-  { field: "id_code", headerName: "code identifiant", flex: 2 },
-  { field: "icon", headerName: "Icon", flex: 1 },
+  { field: "id_code", headerName: "code identifiant", 
+    // flex: 2 
+  },
+  { field: "icon", headerName: "Icon", 
+  // flex: 1 
+  },
   {
     field: "title",
     headerName: "titre",
-    flex: 1,
+    // flex: 1,
   },
   {
     field: "description",
     headerName: "Description",
-    flex: 2,
+    // flex: 2,
   },
   {
     field: "attachment",
     headerName: "File",
-    flex: 1,
+    // flex: 1,
   },
   {
     field: "items_type",
     headerName: "Critéres",
-    flex: 1,
+    // flex: 1,
   },
   {
     field: "conditions",
     headerName: "choix utilisateur",
-    flex: 2,
+    // flex: 2,
   },
   {
     field: "user_help",
     headerName: "Aide utilisateur",
-    flex: 2,
+    // flex: 2,
   },
   {
     field: "comment",
     headerName: "commentaire",
-    flex: 2,
+    // flex: 2,
   },
   {
     field: "help_documents",
     headerName: "List des documents",
-    flex: 2.5,
+    // flex: 2.5,
   },
-  {
-    field: "complexity",
-    headerName: "Point de complexité",
-    flex: 2.5,
-  },
+  // {
+  //   field: "complexity",
+  //   headerName: "Point de complexité",
+  //   // flex: 2.5,
+  // },
   {
     field: "user_right",
     headerName: "Droit utilisateur",
-    flex: 2,
-  },
+    // flex: 2,
+  }
 ];
 
 // const initial = {} as any;
@@ -89,18 +93,21 @@ const DataBaseTable = ({ tableData }: DataBaseViewProps) => {
     console.log(tableData);
   }, [tableData]);
 
+  console.log(filteredData)
+
   return (
-    <Card sx={{ minHeight: 100, overflow: "scroll" }}>
+    <Card sx={{ minHeight: 100 }}>
       <DataGrid
         localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
-        rows={filteredData}
+        //rows={[]}
+        rows={filteredData.map((item, idx)=>({...item, id: idx}))}
         columns={columns}
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 5 },
           },
         }}
-        getRowId={(item) => item}
+        getRowId={(item) => item.id}
         pageSizeOptions={[5, 10]}
         components={{
           Toolbar: GridToolbar,
