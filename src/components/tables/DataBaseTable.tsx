@@ -1,66 +1,148 @@
 import { useEffect, useRef, useState } from "react";
-import { DataGrid, GridColDef, GridToolbar, frFR } from "@mui/x-data-grid";
-import { Button, Card } from "@mui/material";
+import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridToolbar, GridTreeNodeWithRender, frFR } from "@mui/x-data-grid";
+import { Avatar, Box, Button, Card, IconButton, Link, Menu, MenuItem, Popper, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { DataBaseTypes } from "../../types/types";
-import { fetchDataForDB } from "../../api/Loaders";
+import { DataBaseType } from "../../types/types";
+import { deleteStep, fetchDataForDB } from "../../api/Loaders";
+import { ArrowDownward, ArrowUpward, AttachFile, Clear, Delete, Edit } from "@mui/icons-material";
+import React from "react";
+import { BASE_URL } from "../../api/ApiManager";
 
 type DataBaseViewProps = {
-  tableData: DataBaseTypes[];
+  tableData: DataBaseType[];
+  onEdit: (row: DataBaseType) => void
 };
 
-const columns: GridColDef[] = [
-  {
-    field: "family_code",
-    headerName: "code famille",
-    // flex: 1.5,
-  },
-  { field: "id_code", headerName: "code identifiant", 
-    // flex: 2 
-  },
+
+const AttachmentFiles = (params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>) => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <div>
+      <IconButton
+        sx={{width: 30, height: 30}}
+        disabled={params.value === ''}
+        id="basic-button"
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        <AttachFile sx={{ width: 30, height: 30 }} color={params.value === "" ? "disabled" : "primary"} />
+      </IconButton>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        {
+          String(params.value).split(";").map((item, idx) => {
+            return (
+              <MenuItem onClick={handleClose}>
+                <Link key={idx} 
+                    fontStyle={'italic'} 
+                    href={'#'}
+                    component={'a'}
+                    target="_blank"
+                    sx={{cursor: 'pointer' }}>
+                    {
+                      item
+                    }
+                  </Link>
+              </MenuItem>
+            )
+          })
+        }
+       
+      </Menu>
+    </div>
+  );
+}
+
+const getCols = (size: number, onEdit: (row: DataBaseType)=>void, onDelete: (ids: number[]) => void ): GridColDef[] => [
   { field: "icon", headerName: "Icon", 
   // flex: 1 
+    renderCell: (params) => <Avatar sizes={'small'} alt="icon" sx={{ width: 30, height: 30 }} src={BASE_URL+params.value} />,
+    width: 40,
+    sortable: false,
+    filterable: false,
+    disableColumnMenu: true
   },
+  
+  { field: "id_code", headerName: "ID", 
+    width: 70
+  },
+
+  {
+    field: "family_code",
+    headerName: "CF",
+    width: 70
+  },
+  
   {
     field: "title",
-    headerName: "titre",
+    headerName: "Titre",
     // flex: 1,
   },
   {
     field: "description",
-    headerName: "Description",
-    // flex: 2,
-  },
-  {
-    field: "attachment",
-    headerName: "File",
-    // flex: 1,
-  },
-  {
-    field: "items_type",
-    headerName: "Critéres",
-    // flex: 1,
-  },
-  {
-    field: "conditions",
-    headerName: "choix utilisateur",
-    // flex: 2,
-  },
-  {
-    field: "user_help",
-    headerName: "Aide utilisateur",
-    // flex: 2,
-  },
-  {
-    field: "comment",
-    headerName: "commentaire",
+    headerName: "Desc",
     // flex: 2,
   },
   {
     field: "help_documents",
-    headerName: "List des documents",
-    // flex: 2.5,
+    headerName: "P.J",
+    renderCell: (params) => <AttachmentFiles {...params} />,
+    width: 30,
+    filterable: false,
+    sortable: false,
+    disableColumnMenu: true
   },
+  // {
+  //   field: "help_documents",
+  //   headerName: "Docs",
+  //   renderCell: (params) => <AttachmentFiles {...params} />,
+  //   width: 30,
+  //   filterable: false,
+  //   sortable: false,
+  //   disableColumnMenu: true
+  // },
+  {
+    field: "items_type",
+    headerName: "Famille",
+    flex: 1,
+  },
+  // {
+  //   field: "conditions",
+  //   headerName: "choix utilisateur",
+  //   // flex: 2,
+  // },
+  {
+    field: "user_help",
+    headerName: "Aide",
+    flex: 1,
+  },
+  // {
+  //   field: "comment",
+  //   headerName: "commentaire",
+  //   // flex: 2,
+  // },
+  // {
+  //   field: "help_documents",
+  //   headerName: "List des documents",
+  //   // flex: 2.5,
+  // },
   // {
   //   field: "complexity",
   //   headerName: "Point de complexité",
@@ -69,7 +151,51 @@ const columns: GridColDef[] = [
   {
     field: "user_right",
     headerName: "Droit utilisateur",
+    flex: 1,
+    sortable: false,
+    filterable: false,
+    valueGetter(params) {
+      return params.value.join(",")
+    },
     // flex: 2,
+  },
+  {
+    type: 'actions',
+    headerName: "Actions",
+    field: "action",
+    getActions(params) {
+      return [
+        <GridActionsCellItem
+          onClick={(e) => onDelete([parseInt(params.id as string)])}
+          key={params.id}
+          icon={<Clear color='error' />}
+          label="Effacer"
+          showInMenu
+         />,
+        <GridActionsCellItem
+          key={params.id}
+          icon={<Edit  />}
+          label="Modifier"
+          onClick={()=>onEdit({...params.row} as DataBaseType)}
+        />,
+
+        <GridActionsCellItem
+          key={params.id}
+          icon={<ArrowUpward  color="success"/>}
+          label="Deplacer ver le haut"
+          showInMenu
+          disabled={params.row.index == 0}
+        />,
+        <GridActionsCellItem
+          key={params.id}
+          icon={<ArrowDownward color='warning' />}
+          label="Deplacer vers le bas"
+          disabled={params.row.index == size-1}
+          showInMenu
+        />,
+
+      ]
+    },
   }
 ];
 
@@ -78,15 +204,35 @@ const columns: GridColDef[] = [
 //   initial[item.field] = item.headerName;
 // }
 
-const DataBaseTable = ({ tableData }: DataBaseViewProps) => {
+const DataBaseTable = ({ tableData, onEdit }: DataBaseViewProps) => {
   const [filteredData, setFilteredData] = useState(tableData);
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [selectedRows, setSelectedRows] = useState<DataBaseType[]>([]);
 
   function fetchDataDB() {
     fetchDataForDB().then((response) => {
       setFilteredData(response);
     });
   }
+
+  function onDelete(ids: number[]) {
+    if (ids.length == 1){
+      try {
+        deleteStep(ids[0])
+        .then(data => setFilteredData(data))
+      } catch (error) {
+        console.error(error)
+      }
+      
+    }
+  }
+  function colsRenderer(){
+    return getCols(
+      filteredData.length,
+      onEdit,
+      onDelete
+    )
+  }
+  
 
   useEffect(() => {
     fetchDataDB();
@@ -100,18 +246,21 @@ const DataBaseTable = ({ tableData }: DataBaseViewProps) => {
       <DataGrid
         localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
         //rows={[]}
-        rows={filteredData.map((item, idx)=>({...item, id: idx}))}
-        columns={columns}
+        rows={filteredData.map((item, idx) => ({...item, index: idx})).sort((a,b)=>a.rank-b.rank)}
+        columns={colsRenderer()}
         initialState={{
           pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
+            paginationModel: { page: 0, pageSize: 10 },
           },
         }}
         getRowId={(item) => item.id}
+        
+        onRowSelectionModelChange={(models, details) => setSelectedRows(filteredData.filter((item, idx) => models.includes(idx)))}
         pageSizeOptions={[5, 10]}
         components={{
           Toolbar: GridToolbar,
         }}
+        editMode='row'
         autoHeight
         checkboxSelection
         disableRowSelectionOnClick
@@ -134,8 +283,10 @@ const DataBaseTable = ({ tableData }: DataBaseViewProps) => {
 
       {selectedRows?.length > 0 ? (
         <Button className="deleteButton">
-          <DeleteIcon />
-          <span>Supprimer tout les champs selectionné</span>
+          <Clear color="error"/>
+          <span>
+            Supprimer tout les elements sélectionnés
+          </span>
         </Button>
       ) : null}
     </Card>

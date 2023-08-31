@@ -1,48 +1,125 @@
 import {
+  Avatar,
   Box,
   Breadcrumbs,
   Button,
   ButtonGroup,
   Checkbox,
+  Chip,
+  CircularProgress,
   Container,
   FormControl,
   Grid,
+  IconButton,
   InputLabel,
+  Link,
+  ListItem,
   ListItemText,
   MenuItem,
   OutlinedInput,
   Select,
   SelectChangeEvent,
   Stack,
+  TextField,
 } from "@mui/material";
 // import React from "react";
 import "./Create.css";
 import FileUploaderBox from "../../../components/FileUploaderBox";
 import TextArea from "antd/es/input/TextArea";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useBesoinState } from "../../../store/besoin_store";
 import moment from "moment";
 import Typography from "@mui/material/Typography";
+import VirtualizedList from "../../../components/ContentVariations/List";
+import { UploadFile, Visibility } from "@mui/icons-material";
+import ChipSelect from "../../../components/ChipSelect";
+import { useNavigate, useNavigation } from "react-router-dom";
+import { get_details_besoin } from "../../../api/Loaders";
+import FilePicker from "../../../components/FilePicker";
+import { BASE_URL } from "../../../api/ApiManager";
 
-// type Props = {};
-export const InputForm = () => {
+type Props = {
+  help: string
+  comment: string
+  onChange: (v: string) => void
+};
+export const InputForm = (props: Props) => {
+  const [comment, setComment] = React.useState(props.comment)
+
+  const {active_besoin, active_step} = useBesoinState()
+
+  const onChange = (v: string) => {
+    setComment(v)
+    props.onChange(v)
+  }
+
+  const getStep = React.useMemo(()=>{
+    return active_besoin?.steps.find(item => item.id == active_step)
+  },[active_besoin, active_step])
+
+
+
   return (
-    <Stack>
-      <Box>
-        <Typography sx={{ mt: 2 }}>Aide utilisateur</Typography>
-        <TextArea rows={3} style={{ marginTop: 5 }} />
-        <Typography sx={{ mt: 2 }}>Commentaire utilisateur</Typography>
-        <TextArea rows={3} style={{ marginTop: 5 }} />
+    <Stack pt={2} direction={'column'} display={'flex'} overflow={'scroll'} flex={1}>
+      <TextField multiline  rows={3} label='Aide utilisateur' value={props.help} contentEditable={false}  fullWidth />
+      <TextField multiline sx={{mt:2}}  rows={3} label='Commentaire utilisateur'  value={comment}  fullWidth onChange={(e)=>onChange(e.target.value)} />
+      {/* <Box  display={'flex'} mt={2} >
+       
+        
+        <Box width={'10px'}></Box>
+        
       </Box>
-      <Box
+      
+        {/* <Box  mt={2} display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
+          <Typography>
+            Documents Utils
+          </Typography>
+        </Box> */}
+      {/* <Box 
         sx={{
+          flex: 1,
+          mt:1,
           display: "flex",
-          flexDirection: "row",
-          gap: 5,
+          flexDirection: "column",
+          gap: 1,
           width: "100%",
-          mt: 2,
-        }}
-      ></Box>
+         
+          overflow: 'scroll'
+        }}    
+      >  */}
+
+        
+        
+        {/* <Box 
+          flex={1}  
+          height={'100%'} 
+          border={'1px solid rgba(0, 0, 0, 0.87)'}
+          display={'flex'}
+          flexDirection={'column'}
+
+          overflow={'scroll'}
+          sx={{backgroundColor: 'transparent'}}>
+          {
+           (getStep?.help_documents.split(";") ?? []).map((item, idx) => {
+            return (
+              <Link key={idx} href={item} target="_blank" title="link" >{item}</Link>
+            )
+           }
+           )
+          }
+        </Box>
+         */}
+
+        
+
+      {/* </Box> */}
+      {/* <Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'} mt={1}>
+          <Link href="o" target="_blank">
+            Tout Telecharger
+          </Link>
+         
+          
+      </Box> */}
     </Stack>
   );
 };
@@ -71,8 +148,14 @@ const steps: string[] = [
 ];
 
 const Details = () => {
+
   const queryParameters = new URLSearchParams(window.location.search);
-  const { active_besoin, step_list, active_step } = useBesoinState();
+  const navigation = useNavigate()
+  const { active_besoin, active_step, set_active_step, choices, set_choices } = useBesoinState();
+  
+
+  const [loading, setIsLoading] = React.useState(true)
+  const [id, setId] = React.useState(-1)
 
   const [rightActiveButtonId, setRightActiveButtonId] =
     React.useState<number>();
@@ -92,9 +175,62 @@ const Details = () => {
     event.preventDefault();
     console.info("You clicked a breadcrumb.");
   }
+  const ref = useRef<HTMLDivElement>(null)
+
+  const getHeight = React.useMemo(()=>{
+    console.log(ref.current?.style.height, ref.current?.offsetHeight)
+    if (ref && ref.current && ref.current.style.height){
+      return ref.current.style.height
+    }
+    return 100
+  }, [ref])
+
+  console.log(
+    queryParameters.get("id")
+  )
+
+  React.useEffect(()=>{
+    if (!queryParameters.has("id")){
+      navigation("/")
+    } else {
+      setId(v => parseInt(queryParameters.get("id") ?? v.toString()))
+    }
+  }, [navigation, queryParameters])
+
+  React.useEffect(()=>{
+    if (id >= 0) {
+      get_details_besoin(id)
+      .then(data => {
+        if (data.steps.length > 0){
+          set_active_step(data.steps[0].id)
+        }
+      })
+      setIsLoading(false)
+    }
+  }, [id])
+
+  console.log(
+    active_besoin,
+    active_step
+  )
+
+  const stepIcon = React.useMemo(()=>{
+    return active_besoin?.steps.find(item => item.id == active_step)?.icon
+  },[active_besoin, active_step])
+
+  const getStep = React.useMemo(()=>{
+    return active_besoin?.steps.find(item => item.id == active_step)
+  },[active_besoin, active_step])
+
+
 
   return (
-    <Grid container sx={{ position: "relative" }}>
+    <Grid container sx={{ position: "relative" }} height={'75vh'}>
+      {loading ? 
+        <Stack width={'100%'} justifyContent={'center'} alignItems={'center'}>
+          <CircularProgress sx={{justifySelf: 'center'}} />
+        </Stack> :
+      <>
       <Grid xs={12}>
         <Container
           sx={{
@@ -104,24 +240,7 @@ const Details = () => {
             width: "100%",
           }}
         >
-          <Breadcrumbs
-            aria-label="breadcrumb"
-            sx={{
-              alignItems: "center",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            {steps.map((step, index) => (
-              <Typography
-                variant="button"
-                key={index}
-                sx={{ cursor: "pointer" }}
-              >
-                {step}
-              </Typography>
-            ))}
-          </Breadcrumbs>
+         
         </Container>
       </Grid>
 
@@ -134,7 +253,7 @@ const Details = () => {
           alignItems={"center"}
         >
           <Typography variant="body2">Numero d'identification</Typography>
-          <Typography>{active_besoin?.id ?? "1"}</Typography>
+          <Typography>{active_besoin?.besoin.id ?? "1"}</Typography>
         </Grid>
         <Grid
           xs={6}
@@ -144,7 +263,7 @@ const Details = () => {
           alignItems={"center"}
         >
           <Typography variant="body2">Designation</Typography>
-          <Typography>{active_besoin?.designation ?? "EB12"}</Typography>
+          <Typography>{active_besoin?.besoin.designation ?? "EB12"}</Typography>
         </Grid>
         <Grid
           xs={3}
@@ -155,29 +274,78 @@ const Details = () => {
         >
           <Typography variant="body2">Derniere modification</Typography>
           <Typography>
-            {moment(active_besoin?.update_at ?? new Date()).calendar()}
+            {moment(active_besoin?.besoin.update_at ?? new Date()).calendar()}
           </Typography>
         </Grid>
       </Grid>
-      <Grid xs={3}>
-        <Stack>
-          <Box sx={{ width: "100%" }}>
+
+      <Grid xs={2} height={'100%'}>
+        <Stack height={'100%'}>
+          <Typography sx={{ mt: -0.5 }}>List des etapes</Typography>
+          <Box
+            sx={{ width: "100%", scrollbarWidth: 2, scrollbarColor: 'red', overflow: 'scroll' }}
+            height={'100%'}
+
+            border={'1px solid rgba(0, 0, 0, 0.87)'}>
+            <Stack alignItems={'start'} ref={ref} height={'100%'}>
+              <VirtualizedList data={active_besoin?.steps ?? []} height={1000} />
+              {/* {steps.map((step, index) => (
+                <Button
+                  //fullWidth
+                  variant='text'
+                  key={index}
+                  sx={{ textAlign: 'left', alignItems: 'start', textDecoration: 'underline' }}
+                >
+                  {step}
+                </Button>
+              ))} */}
+
+            </Stack>
+
+
+          </Box>
+          {/* <Box sx={{ width: "100%" }}>
             <Typography sx={{ mt: -0.5 }}>Document utils</Typography>
             <TextArea rows={2} style={{ marginTop: 2 }} />
           </Box>
           <Box sx={{ width: "100%" }}>
             <Typography sx={{ mt: 2 }}>Glisser/déposer Document</Typography>
             <TextArea rows={3} style={{ marginTop: 2 }} />
-          </Box>
+          </Box> */}
         </Stack>
       </Grid>
-      <Grid xs={6}>
-        <Typography width={"100%"} variant="body2" textAlign={"center"}>
-          Description
-        </Typography>
-        <Box sx={{ px: 2 }}>
-          <FileUploaderBox />
-          <InputForm />
+      <Grid xs={7} height={'100%'}  display={'flex'} flexDirection={'column'}>
+
+        <Box sx={{ px: 2 }} height={'100%'} flex={1} display={'flex'} flexDirection={'column'}>
+          {/* <FileUploaderBox /> */}
+          <Box display={'flex'} flexDirection={'row'}>
+            <Stack flex={1} height={'100%'}>
+              <Typography variant="body2">
+                Aide en image
+              </Typography>
+              <Box border={'1px solid rgba(0, 0, 0, 0.87)'} width={'100%'} height={200}>
+               {/* <Image height={198} src={stepIcon} /> */}
+               <Avatar 
+                variant='square' 
+                sx={{height: "100%", width: '100%'}}
+                src={BASE_URL + stepIcon} />
+
+            
+              </Box>
+            </Stack>
+            <Box width={'5px'}></Box>
+            <Stack flex={1} height={'100%'} >
+              <Typography width={'100%'} textAlign={'center'} variant="body2">
+                Description
+              </Typography>
+              <Box width={'100%'} height={200} p={1}  border={'1px solid rgba(0, 0, 0, 0.87)'} overflow={'scroll'} >
+                <Typography sx={{cursor: 'auto'}}>
+                  {getStep?.description}
+                </Typography>
+              </Box>
+            </Stack>
+          </Box>
+          <InputForm help={getStep?.user_help?? ""} comment={getStep?.comment ?? ""} onChange={(v)=>console.log(v)} />
           <Box
             sx={{
               display: "flex",
@@ -185,6 +353,7 @@ const Details = () => {
               alignItems: "center",
               mt: 5,
               width: "100%",
+              //flex: 1,
             }}
           >
             <Button
@@ -243,53 +412,105 @@ const Details = () => {
       <Grid xs={3}>
         <FormControl sx={{ width: "100%", mt: 2.5 }}>
           <InputLabel id="demo-multiple-checkbox-label">
-            Liste de critères
+            {getStep?.items_type}
           </InputLabel>
           <Select
             labelId="demo-multiple-checkbox-label"
             id="demo-multiple-checkbox"
             multiple
-            value={itemsList}
-            onChange={handleChange}
-            input={<OutlinedInput label="Liste de critères" />}
+            value={choices}
+            onChange={(e)=>{
+              const value = e.target.value
+              if ((typeof value ) == (typeof "")){
+                set_choices([value])
+              } else {
+                set_choices(value)
+              }
+            }}
+            input={<OutlinedInput label={getStep?.items_type} />}
             renderValue={(selected) => selected.join(", ")}
           >
-            {Items.map((item) => (
+            {getStep?.items_list?.map((item) => (
               <MenuItem key={item} value={item}>
-                <Checkbox checked={itemsList.indexOf(item) > -1} />
+                <Checkbox checked={choices.includes(item)} />
                 <ListItemText primary={item} />
               </MenuItem>
             ))}
           </Select>
         </FormControl>
-        <Box sx={{ mt: 5, mb: 3 }}>
-          <Typography>Choix utilisateur</Typography>
+        <Box sx={{ mt: 2 }}>
+          <Typography>Glisser/Deposer document</Typography>
           <Box
             sx={{
+              //backgroundColor: 'red',
               border: "1px solid #dedede",
               width: "100%",
-              height: 500,
+              //height: 500,
+              flex: 1,
               p: 2,
+              overflow: 'scroll'
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "flex-start",
-              }}
-            >
-              <Stack>
-                {itemsList.map((item, index) => (
-                  <Typography key={index}>{item}</Typography>
-                ))}
-              </Stack>
+            <Box 
+              flex={1}  
+              height={'100%'} 
+              //border={'1px solid rgba(0, 0, 0, 0.87)'}
+              overflow={'scroll'}
+              sx={{backgroundColor: 'transparent'}}>
+              {/* <ChipSelect /> */}
+              
+              <FilePicker />
             </Box>
+  
           </Box>
         </Box>
-      </Grid>
+
+        <Box sx={{ mt: 2 }}>
+          <Typography>Documents utils</Typography>
+          <Box
+            sx={{
+              //backgroundColor: 'red',
+              border: "1px solid #dedede",
+              width: "100%",
+              //height: 500,
+              flex: 1,
+              p: 2,
+              overflow: 'scroll'
+            }}
+          >
+            <Box 
+              flex={1}  
+              height={'100%'} 
+              overflow={'scroll'}
+              sx={{backgroundColor: 'transparent'}}>
+
+              {getStep?.help_documents?.map((data, idx) => {
+                      return (
+                          
+                              <ListItem key={idx}>
+                              <Chip
+                                  clickable
+                                  icon={<a href={BASE_URL + data as string} target='_blank'><Visibility sx={{marginTop: 0.5}} /></a>}
+                                  label={(data as string).substring(data.lastIndexOf("/") + 1, data.length)}
+                                  //deleteIcon={<Delete onClick={(e)=>{e.stopPropagation()}}  />}
+                                  //onDelete={handleDelete(idx)}
+                                  
+                              />
+                          </ListItem>
+                          
+                        
+                      );
+                    })}
+              
+              
+            </Box>
+  
+          </Box>
+        </Box>
+      </Grid></>}
     </Grid>
   );
 };
 
 export default Details;
+

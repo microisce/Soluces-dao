@@ -1,11 +1,12 @@
 import axios from "axios";
 import { vanillaAuthState } from "../store/auth_store";
+const BASE_URL = "http://localhost:8000"
 
 export type KeyValue = { [key: string]: string | number };
 
 const instance = axios.create({
   // baseURL: "http://192.168.100.15:8000/api/",
-  baseURL: "http://localhost:8000/api/",
+  baseURL: `${BASE_URL}/api`,
   //baseURL: "https://erp-demo-v1.ismaeland.com/api/",
   //timeout: 4000,
   withCredentials: false,
@@ -17,7 +18,7 @@ const instance = axios.create({
 const no_auth_http = axios.create({
   // baseURL: "http://192.168.100.15:8000/api/",
   //baseURL: "https://erp-demo-v1.ismaeland.com/api/",
-  baseURL: "http://localhost:8000/api/",
+  baseURL:  `${BASE_URL}/api`,
   timeout: 20000,
   withCredentials: false,
   headers: {
@@ -75,4 +76,4 @@ const http = {
   del: del,
 };
 
-export { http, no_auth_http };
+export { http, no_auth_http, BASE_URL };

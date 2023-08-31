@@ -11,6 +11,7 @@ import {
   Mail,
   Storage,
 } from "@mui/icons-material";
+import { BASE_URL } from "../api/ApiManager";
 
 export const links: linksType[] = [
   {
@@ -45,7 +46,8 @@ export const links: linksType[] = [
   },
   {
     id: 6,
-    path: "/dashboard/admin-console",
+    path: "/admin",
+    //path: "/dashboard/admin-console",
     text: "Console administrateur ",
     icon: <AdminPanelSettings />,
   },
@@ -67,10 +69,11 @@ export const SideBar = () => {
   return (
     <Box sx={sideBarStyle.container}>
       <Box sx={sideBarStyle.linksContainer}>
-        {links.map((link) => (
+        {links.map((link, idx, list) => (
           <NavLink
             key={link.id}
-            to={link.path}
+            to={(idx == list.length - 1 ? BASE_URL : "" ) + link.path}
+            target={idx==list.length-1  ? "_blank": undefined}
             className={({ isActive }) => (isActive ? "link-active" : "link")}
           >
             {link.text}

@@ -2,39 +2,8 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 import jwt_decode from "jwt-decode";
+import { BesoinDetails, Step } from '../types/types';
 
-
-
-interface Step {
-    id: number
-    title: string
-    code_family: string
-    icon: string
-    image: string
-    user_help: string
-    comment: string;
-    description: string
-    need: number
-    criteria: string
-    criteria_list: string[]
-}
-
-interface Besoin {
-    id: number
-    designation: string
-    state: string
-    create_at: string
-    update_at: string
-    description: string
-    supervisor: string | null
-    executor: string | null
-    company: string | null
-    client: string | null
-    task: string | null
-    owner: string | null
-    operator: string | null
-    zip: string | null
-}
 
 
 
@@ -42,28 +11,37 @@ interface Besoin {
 
 type BesoinState<T> = {
   
-  active_besoin: Besoin
-  step_list: Step[]
+  active_besoin?: BesoinDetails
   active_step: number
+  comment: string
+  files: (File | any)[]
+  choices: string[]
+
   
 
-  set_besoin: (step: Besoin) => void 
+  set_besoin: (step: BesoinDetails) => void 
+  set_choices: (choices: string[]) => void 
   set_active_step: (step_id: number) => void 
+
+  get_step: ()=>(Step|undefined)
   
 
 }
 
 
 
-const vanillaBesoinState = create<BesoinState<unknown>>()(
+const vanillaBesoinStore = create<BesoinState<unknown>>()(
   devtools(
     persist(
       (set, get) => ({
-        active_besoin: {} as Besoin,
-        step_list: [] as Step[],
+        choices: [],
+        comment: "",
+        files: [],
         active_step: -1,
         set_besoin: (active_besoin) => set(old_value=>  ({active_besoin})),
-        set_active_step: (active_step) => set(old_value =>   ({active_step}))
+        set_choices: (choices) => set(old_value=>  ({choices})),
+        set_active_step: (active_step) => set(old_value =>   ({active_step})),
+        get_step: ()=> get().active_besoin?.steps.find(item => item.id == get().active_step)
       }),
       {
         name: 'besoin_store',
@@ -72,14 +50,14 @@ const vanillaBesoinState = create<BesoinState<unknown>>()(
   )
 )
 
-const useBesoinState = vanillaBesoinState as {
+const useBesoinState = vanillaBesoinStore as {
     <T>(): BesoinState<T>;
     <T, U>(selector: (s: BesoinState<T>) => U): U;
 }
-//const useBesoinState = (selector: { (state: BesoinState): Partial<BesoinState> }) => useStore(vanillaBesoinState, selector)
+//const useBesoinState = (selector: { (state: BesoinState): Partial<BesoinState> }) => useStore(vanillaBesoinStore, selector)
 
 export {
     useBesoinState,
-    vanillaBesoinState
+    vanillaBesoinStore
 }
 

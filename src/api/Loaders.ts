@@ -1,7 +1,8 @@
 import { toast } from "react-toastify";
 import { http, no_auth_http } from "./ApiManager";
-import { DataBaseTypes, NewUserType } from "../types/types";
+import { BesoinDetails, DataBaseType, NewUserType, Step } from "../types/types";
 import { vanillaAuthState } from "../store/auth_store";
+import { vanillaBesoinStore } from "../store/besoin_store";
 
 export const requestOTP = async (email: string): Promise<boolean> => {
   const data = { email };
@@ -140,7 +141,7 @@ export const getTypesList = async () => {
   }
 };
 
-export const createDataForDB = async (data: DataBaseTypes) => {
+export const createDataForDB = async (data: Step) => {
   const input_data = {
     ...data,
   };
@@ -178,5 +179,39 @@ export const getFamilyCodeChoices = async () => {
   } catch (error) {
     console.log(error);
     return []
+  }
+};
+
+
+export const deleteStep = async (id: number) => {
+  try {
+    const response = await http.del(`/step/delete/${id}/`);
+    if (response && response.status == 200) {
+      toast.success("Etape effacée avec succès");
+      console.log(response.data.results)
+      return response.data.results;
+    }
+    return Promise.reject()
+  } catch (error) {
+    console.log(error);
+    return Promise.reject()
+  }
+};
+
+
+export const get_details_besoin = async (id: number) => {
+  try {
+    const response = await http.get(`/besoin/details/${id}`);
+    if (response && response.status == 200) {
+      //toast.success("Etape effacée avec succès");
+      console.log(response.data)
+      const data = response.data as BesoinDetails;
+      vanillaBesoinStore.setState({active_besoin: data})
+      return data
+    }
+    return Promise.reject()
+  } catch (error) {
+    console.log(error);
+    return Promise.reject()
   }
 };
