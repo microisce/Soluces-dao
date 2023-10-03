@@ -69,7 +69,7 @@ const CreateDataModal = ({
   const [selectedList, setSelectedList] = useState<string[]>([]);
   const [familyCodeChoices, setFamilyCodeChoices] = useState<string[]>([])
 
-  const [formData, setFormData] = React.useState<Step>({} as Step)
+  const [formData, setFormData] = React.useState<Step>({...initial} as Step)
 
   const fetchTypes = () => {
     getTypesList()
@@ -113,12 +113,13 @@ const CreateDataModal = ({
     //   ...data,
     // };
     // console.log(copied_data)
+     
     createData(formData)
-    // .then(ok => {
-    //   if (ok){
-    //     onClose()
-    //   }
-    // })
+    .then(ok => {
+      if (ok){
+        onClose()
+      }
+    })
     //setData(initialValues);
   };
 
@@ -144,6 +145,8 @@ const CreateDataModal = ({
     console.log(data)
   }, [data]);
 
+  console.log(initial)
+
 
 
   return (
@@ -161,7 +164,7 @@ const CreateDataModal = ({
           >
             <CloseIcon />
           </Button>
-          <Typography variant="subtitle1">Creation des données</Typography>
+          <Typography variant="subtitle1">{initial ? "Edition" : "Creation"} des données</Typography>
           <Box
             sx={{
               display: "flex",
@@ -217,7 +220,7 @@ const CreateDataModal = ({
             <Typography alignSelf={'flex-start'} mb={-2}>
               Icon
             </Typography>
-            <FilePicker single onSelect={v=>setFormData(f=>({...f, icon: v[0]}))} />
+            <FilePicker single  onSelect={v=>setFormData(f=>({...f, icon: v[0]}))} />
 
             <TextField
               variant="outlined"

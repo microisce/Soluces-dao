@@ -72,29 +72,50 @@ export interface BesoinDetails {
 export interface Besoin {
   id: number
   designation: string
-  state: number
+  complexite: string
   created_at: string
   update_at: string
   owner: any
 }
 
+export interface HelpDocument {
+  url: string
+  title: string
+}
 export interface Step {
+  icon: string
   items_type: string
-  items_list: string[]
   multiple: boolean
+  items_list: string[]
+  help_documents: string[]
+  user_right: string[]
+  id: number
   title: string
   family_code: string
   id_code: string
-  icon: string | File
-  attachment: string
-  help_documents: (string | File)[]
   user_help: string
-  comment: string
   description: string
   condition: string
-  complexity: number
-  user_right: string[]
   rank: number
-  groups: any
-  id: number
+  comment: string
+  choice: string
+  docs: string[]
+  // items_type: string
+  // items_list: string[]
+  // multiple: boolean
+  // title: string
+  // family_code: string
+  // id_code: string
+  // icon: string | File
+  // attachment: string
+  // help_documents: (HelpDocument | string | File)[]
+  // user_help: string
+  // comment: string
+  // description: string
+  // condition: string
+  // complexity: number
+  // user_right: string[]
+  // rank: number
+  // groups: any
+  // id: number
 }

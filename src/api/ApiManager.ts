@@ -61,6 +61,12 @@ const post = (url: string, data?: KeyValue) => {
   return instance(url, { method: "post", data: data });
 };
 
+const post_form = (url: string, data?: FormData) => {
+  return instance(url, { method: "post", data: data,  headers: {
+    'Content-Type': 'multipart/form-data'
+  } });
+};
+
 const put = (url: string, data?: KeyValue) => {
   return instance(url, { method: "put", data: data });
 };
@@ -74,6 +80,7 @@ const http = {
   post: post,
   put: put,
   del: del,
+  post_form: post_form
 };
 
-export { http, no_auth_http, BASE_URL };
+export { http, no_auth_http, BASE_URL, post_form };

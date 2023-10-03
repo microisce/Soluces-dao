@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridToolbar, GridTreeNodeWithRender, frFR } from "@mui/x-data-grid";
 import { Avatar, Box, Button, Card, IconButton, Link, Menu, MenuItem, Popper, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { DataBaseType } from "../../types/types";
+import { DataBaseType, HelpDocument } from "../../types/types";
 import { deleteStep, fetchDataForDB } from "../../api/Loaders";
 import { ArrowDownward, ArrowUpward, AttachFile, Clear, Delete, Edit } from "@mui/icons-material";
 import React from "react";
@@ -28,14 +28,14 @@ const AttachmentFiles = (params: GridRenderCellParams<any, any, any, GridTreeNod
     <div>
       <IconButton
         sx={{width: 30, height: 30}}
-        disabled={params.value === ''}
+        disabled={params.value.length == 0 }
         id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <AttachFile sx={{ width: 30, height: 30 }} color={params.value === "" ? "disabled" : "primary"} />
+        <AttachFile sx={{ width: 30, height: 30 }} color={params.value.length == 0 ? "disabled" : "primary"} />
       </IconButton>
       <Menu
         id="basic-menu"
@@ -47,17 +47,17 @@ const AttachmentFiles = (params: GridRenderCellParams<any, any, any, GridTreeNod
         }}
       >
         {
-          String(params.value).split(";").map((item, idx) => {
+          (params.value as HelpDocument[]).map((item, idx) => {
             return (
               <MenuItem onClick={handleClose}>
                 <Link key={idx} 
                     fontStyle={'italic'} 
-                    href={'#'}
+                    href={BASE_URL + item.url}
                     component={'a'}
                     target="_blank"
                     sx={{cursor: 'pointer' }}>
                     {
-                      item
+                      item.url.split("/medias/documents/")[1]
                     }
                   </Link>
               </MenuItem>
@@ -176,7 +176,12 @@ const getCols = (size: number, onEdit: (row: DataBaseType)=>void, onDelete: (ids
           key={params.id}
           icon={<Edit  />}
           label="Modifier"
-          onClick={()=>onEdit({...params.row} as DataBaseType)}
+          onClick={()=>{
+            //"_blank"
+            window.open(BASE_URL+`/admin/ERP/step/${params.id}/change/`, '_blank');
+            //return onEdit({...params.row} as DataBaseType)
+          }
+          }
         />,
 
         <GridActionsCellItem

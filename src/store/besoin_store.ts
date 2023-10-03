@@ -40,7 +40,7 @@ const vanillaBesoinStore = create<BesoinState<unknown>>()(
         active_step: -1,
         set_besoin: (active_besoin) => set(old_value=>  ({active_besoin})),
         set_choices: (choices) => set(old_value=>  ({choices})),
-        set_active_step: (active_step) => set(old_value =>   ({active_step})),
+        set_active_step: (active_step) => set(old_value =>   ({active_step, choices: []})),
         get_step: ()=> get().active_besoin?.steps.find(item => item.id == get().active_step)
       }),
       {

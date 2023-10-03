@@ -10,10 +10,16 @@ import PasswordUpdate from "./pages/auth/PasswordUpdate.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import NewPage from "./pages/edit.tsx"
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
+  },
+  {
+    path: "/new",
+    element: <NewPage />,
   },
   {
     path: "/password-restoration",

@@ -4,11 +4,12 @@ import { Chip, Stack } from '@mui/material'
 
 type Props = {
     label?: string
-    single?: boolean
+    single?: boolean,
+    items?: any[],
     onSelect?: (files: File[]) => void
 }
 const FilePicker = (props: Props) => {
-  const [value, setValue] = React.useState<File[]>([])
+  const [value, setValue] = React.useState<File[]>([...(props.items ?? [])])
 
   const handleChange = (newValue: File[]) => {
     
@@ -45,22 +46,24 @@ const FilePicker = (props: Props) => {
   };
 
   return (
-    <Stack direction="column" spacing={1} overflow={'scroll'} width={'100%'}>
+    <Stack direction="column" spacing={1}  width={'100%'}  flex={1}>
 
         <MuiFileInput
+          style={{ height: '100%'}}
           label={props.label}
           multiple
           value={value}
           onChange={handleChange}
           getInputText={v=>`${v.length} Fichier`+`${v.length > 1 ? "s": ""}`}
+          //inputProps={{style:{height: '100%'}}}
           //hideSizeText
         />
-        <Stack  direction={"row"} gap={1} overflow={'scroll'} flexWrap={'wrap'}>
+        <Stack  direction={"row"} gap={1}   flexWrap={'wrap'}>
         {value.length > 1 ? 
 
         value.map((item, idx) => {
             return (
-                <Chip key={idx} label={`${item.name}`} onDelete={e => handleDelete(idx)} />
+                <Chip size='small' key={idx} label={`${item.name}`} onDelete={e => handleDelete(idx)} />
             )
         })
          : null}

@@ -14,9 +14,9 @@ function RenderRow(props: Props) {
   const {active_step, set_active_step} = useBesoinState()
 
   return (
-    <ListItem style={style} key={index} component="div" disablePadding >
-      <ListItemButton selected={props.data[index].id == active_step} onClick={()=>set_active_step(props.data[index].id)}>
-        <ListItemText primary={`${props.data[index].id_code}`} />
+    <ListItem  style={style} key={index} component="div" disablePadding >
+      <ListItemButton   selected={props.data[index].id == active_step} onClick={()=>set_active_step(props.data[index].id)}>
+        <ListItemText  primary={`${props.data[index].id_code}`} />
       </ListItemButton>
     </ListItem>
   );

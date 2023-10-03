@@ -34,7 +34,7 @@ const columns: GridColDef[] = [
     },
   },
   { field: "designation", headerName: "Désignation", flex: 1 },
-  { field: "state", headerName: "Niveau", flex: 1 },
+  { field: "complexite", headerName: "Niveau", flex: 1 },
   {
     field: "create_at",
     headerName: "Date d'édition",

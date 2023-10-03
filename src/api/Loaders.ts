@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { http, no_auth_http } from "./ApiManager";
+import { http, no_auth_http, post_form } from "./ApiManager";
 import { BesoinDetails, DataBaseType, NewUserType, Step } from "../types/types";
 import { vanillaAuthState } from "../store/auth_store";
 import { vanillaBesoinStore } from "../store/besoin_store";
@@ -142,11 +142,30 @@ export const getTypesList = async () => {
 };
 
 export const createDataForDB = async (data: Step) => {
-  const input_data = {
-    ...data,
-  };
+  const input_data = new FormData()
+  // input_data.append("family_code", data.family_code)
+  // input_data.append("id_code", data.id_code)
+  // input_data.append("condition", data.condition)
+  // input_data.append("description", data.description)
+  // input_data.append("icon", data.icon)
+  // input_data.append("items_type", data.items_type)
+  for (const key of Object.keys(data)){
+    if (key == "help_documents"){
+      let counter = 0
+      for (const k of Object.keys(data.help_documents)){
+        input_data.append(`doc_util_${counter}`, data.help_documents[counter])
+        counter++
+      }
+      continue
+    }
+    input_data.append(key, data[key])
+  }
+  console.log(
+    input_data.keys(),
+    input_data.values()
+  )
   try {
-    const response = await http.post(`/step/list/`, input_data);
+    const response = await http.post_form(`/step/list/`, input_data);
     if (response && response.status == 200) {
       toast.success("Données créées avec succès");
       return response.data.result;
@@ -205,8 +224,52 @@ export const get_details_besoin = async (id: number) => {
     if (response && response.status == 200) {
       //toast.success("Etape effacée avec succès");
       console.log(response.data)
-      const data = response.data as BesoinDetails;
-      vanillaBesoinStore.setState({active_besoin: data})
+      const data = response.data
+      //vanillaBesoinStore.setState({active_besoin: data})
+      return data
+    }
+    return Promise.reject()
+  } catch (error) {
+    console.log(error);
+    return Promise.reject()
+  }
+};
+
+export const save_step = async (data:{
+  comment: string,
+  files: File[],
+  choices: string[],
+  step_id: number,
+  besoin_id: number
+}) => {
+  try {
+    const form = new FormData()
+    form.append("step_id", data.step_id.toString())
+    form.append("besoin_id", data.besoin_id.toString())
+    form.append("comment", data.comment)
+    form.append("choices", data.choices.join())
+    for (let i=0; i<data.files.length; i++){
+      form.append(`file_${i}`, data.files[i])
+    }
+
+    const response = await post_form(`/step/ok/`, form );
+    if (response && response.status == 200) {
+      const data = response.data
+      return data
+    }
+    return Promise.reject()
+  } catch (error) {
+    console.log(error);
+    return Promise.reject()
+  }
+};
+
+export const reset_step = async (besoin_id: number, step_id: number) => {
+  try {
+    const response = await http.post(`/step/nok/`, {besoin_id, step_id});
+    if (response && response.status == 200) {
+      console.log(response.data)
+      const data = response.data
       return data
     }
     return Promise.reject()

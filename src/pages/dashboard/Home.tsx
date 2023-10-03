@@ -25,6 +25,7 @@ import { Divider, List } from "antd";
 import { Inbox, Mail, Menu as MenuIcon } from "@mui/icons-material";
 import SDLogo from "../../assets/SD-LOGO.png";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../../api/ApiManager";
 
 const drawerWidth = 300;
 
@@ -44,9 +45,16 @@ const DrawerMenu = () => {
       </Toolbar>
       <Divider />
       <List>
-        {links.map((item, index) => (
+        {links.map((item, index, list) => (
           <ListItem key={item.id} disablePadding>
-            <ListItemButton onClick={() => navigate(item.path)}>
+            <ListItemButton onClick={() => {
+              if (index == (list.length -1)){
+                console.log("SIDE")
+                window.open(BASE_URL+item.path, '_blank');
+                return
+              }
+              navigate(item.path)
+            }}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
